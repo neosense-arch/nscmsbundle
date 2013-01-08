@@ -1,0 +1,23 @@
+{% extends 'NSAdminBundle::layout.html.twig' %}
+
+{% block content %}
+	<h3>Управление страницами</h3>
+
+	<div class="row">
+		<div class="span3">
+			{% render 'NSCmsBundle:AdminPages:blockPagesTree' %}
+		</div>
+		<div class="span9">
+			{% include 'NSCmsBundle:AdminPages:block-page-tabs.html.twig' with {active: tab, pageId: pageId} %}
+
+			<form method="post" {{ form_enctype(form) }} autocomplete="off">
+				{{ form_errors(form) }}
+				{{ form_rest(form) }}
+				<button class="btn btn-success">Сохранить</button>
+				{% if tab == 'general' %}
+					<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'delete' }) }}?id={{ pageId }}" class="btn btn-link ns-confirm">Удалить страницу</a>
+				{% endif %}
+			</form>
+		</div>
+	</div>
+{% endblock %}

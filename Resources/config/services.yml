@@ -1,0 +1,44 @@
+parameters:
+    ns_cms.repository.template.class:         NS\CmsBundle\Entity\TemplateRepository
+    ns_cms.repository.blocktype.class:        NS\CmsBundle\Entity\BlockTypeRepository
+    ns_cms.repository.block.class:            NS\CmsBundle\Entity\BlockRepository
+    ns_cms.repository.block.factory_argument: 'NSCmsBundle:Block'
+    ns_cms.form.type.template_path.class:     NS\CmsBundle\Form\Type\TemplatePathType
+    ns_cms.manager.template.class:            NS\CmsBundle\Manager\TemplateManager
+    ns_cms.manager.block.class:               NS\CmsBundle\Manager\BlockManager
+
+services:
+    ns_cms.repository.template:
+        class: %ns_cms.repository.template.class%
+        calls:
+            - [setContainer, ["@service_container"]]
+
+    ns_cms.repository.blocktype:
+        class: %ns_cms.repository.blocktype.class%
+        calls:
+            - [setContainer, ["@service_container"]]
+
+    ns_cms.repository.block:
+        class: %ns_cms.repository.block.class%
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: getRepository
+        arguments:
+            - %ns_cms.repository.block.factory_argument%
+
+    ns_cms.form.type.template_path:
+        class: %ns_cms.form.type.template_path.class%
+        calls:
+            - [setTemplateRepository, [@ns_cms.repository.template]]
+        tags:
+            -  { name: form.type, alias: ns_cmsbundle_templatepathtype }
+
+    ns_cms.manager.template:
+        class: %ns_cms.manager.template.class%
+        calls:
+            - [setTemplateRepository, [@ns_cms.repository.template]]
+
+    ns_cms.manager.block:
+        class: %ns_cms.manager.block.class%
+        calls:
+            - [setBlockRepository, [@ns_cms.repository.block]]
+            - [setBlockTypeRepository, [@ns_cms.repository.blocktype]]

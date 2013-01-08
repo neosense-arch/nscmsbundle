@@ -1,0 +1,14 @@
+{% extends 'NSAdminBundle::layout.html.twig' %}
+
+{% block content %}
+	<h3>Редактирование блока</h3>
+
+	{% include 'NSCmsBundle:AdminBLocks:_tabs.html.twig' with {active: 'settings', blockId: block.id, redirect: redirect} %}
+
+	<form method="post" {{ form_enctype(form) }} autocomplete="off">
+		{{ form_errors(form) }}
+		{{ form_rest(form) }}
+		<button class="btn btn-success">Сохранить</button>
+		<a href="{{ redirect }}" class="btn">Отмена</a>
+	</form>
+{% endblock %}

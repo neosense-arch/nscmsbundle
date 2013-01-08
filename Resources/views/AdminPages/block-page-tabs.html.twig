@@ -1,0 +1,20 @@
+<ul class="nav nav-tabs">
+	<li {% if active == 'general' %}class="active"{% endif %}>
+		<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'general' }) }}?pageId={{ pageId }}">
+			<i class="icon-cog"></i>
+			Общие
+		</a>
+	</li>
+	<li {% if active == 'additional' %}class="active"{% endif %}>
+		<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'additional' }) }}?pageId={{ pageId }}">
+			<i class="icon-wrench"></i>
+			Дополнительно
+		</a>
+	</li>
+	<li {% if active == 'blocks' %}class="active"{% endif %}>
+		<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'blocks' }) }}?pageId={{ pageId }}">
+			<i class="icon-th-large"></i>
+			Блоки
+		</a>
+	</li>
+</ul>

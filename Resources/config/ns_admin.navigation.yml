@@ -1,0 +1,10 @@
+-
+    label:  "Контент"
+    action: "content:index"
+    pages:
+        -
+            label:  Общие
+            action: pages:general
+        -
+            label:  Дополнительно
+            action: pages:additional

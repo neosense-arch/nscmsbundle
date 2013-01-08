@@ -1,0 +1,229 @@
+{% extends 'NSAdminBundle::layout.html.twig' %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		$(function(){
+			// adds new block
+			var fnAddBlock = function(blockType, areaName, pageId, position, callback) {
+				$('#ns-loader').animate({'opacity': 1});
+				$.ajax({
+					'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'blocks', adminAction: 'ajaxAdd' }) }}',
+					'data': {
+						blockType: blockType,
+						areaName:  areaName,
+						pageId:    pageId,
+						position:  position
+					}
+				})
+				.done(function(res){
+					if (res && typeof(res.error) != 'undefined') {
+						throw res.error;
+					}
+					callback(res.id, res.title);
+				})
+				.always(function(){
+					$('#ns-loader').animate({'opacity': 0});
+				});
+			};
+
+			// reorders block
+			var fnReorderBlock = function(blockId, areaName, pageId, position) {
+				$('#ns-loader').animate({'opacity': 1});
+				$.ajax({
+					'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'blocks', adminAction: 'ajaxReorder' }) }}',
+					'data': {
+						blockId:   blockId,
+						areaName:  areaName,
+						pageId:    pageId,
+						position:  position
+					}
+				})
+				.done(function(res){
+					if (res && typeof(res.error) != 'undefined') {
+						throw res.error;
+					}
+				})
+				.always(function(){
+					$('#ns-loader').animate({'opacity': 0});
+				});
+			};
+
+			// removes block
+			var fnDeleteBlock = function(blockId, callback) {
+				$('#ns-loader').animate({'opacity': 1});
+				$.ajax({
+					'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'blocks', adminAction: 'ajaxDelete' }) }}',
+					'data': {
+						blockId:   blockId
+					}
+				})
+				.done(function(res){
+					if (res && typeof(res.error) != 'undefined') {
+						throw res.error;
+					}
+					callback();
+				})
+				.always(function(){
+					$('#ns-loader').animate({'opacity': 0});
+				});
+			};
+
+			/**
+			 * Delete handler
+			 * @return {Boolean}
+			 */
+			var fnDeleteBlockHandler = function() {
+				if (!confirm('Вы уверены, что хотите удалить блок?')) {
+					return false;
+				}
+
+				var block = $(this).parents('.block-type');
+				fnDeleteBlock(block.attr('data-id'), function(){
+					block.remove();
+				});
+
+				return false;
+			};
+
+			/**
+			 * Update handler
+			 * @return {Boolean}
+			 */
+			var fnUpdateBlockHandler = function() {
+				var blockId = $(this).parents('.block-type').attr('data-id');
+				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'blocks', adminAction: 'settings' }) }}?blockId=' + blockId + '&redirect=' + location.href;
+				return false;
+			};
+
+			// sortable
+			$('.block-area').sortable({
+				axis: 'y',
+				connectWith: '.block-area',
+				stop: function(e, ui){
+					var areaName = ui.item.parents('.block-area').attr('data-name'),
+						pageId   = {{ page.id }},
+						position = ui.item.parents('.block-area').find('.block-type').index(ui.item);
+
+					// real block, reordering
+					if (ui.item.attr('data-id')) {
+						fnReorderBlock(ui.item.attr('data-id'), areaName, pageId, position);
+					}
+
+					// new block, adding
+					else {
+						ui.item.find('.title').text('...');
+						fnAddBlock(ui.item.attr('data-name'), areaName, pageId, position, function(id, title){
+							ui.item.attr('data-id', id);
+							ui.item.find('.title').text(title);
+						});
+						// delete handler
+						ui.item.find('.block-remove').click(fnDeleteBlockHandler);
+						// update handler
+						ui.item.find('.block-update').click(fnUpdateBlockHandler);
+					}
+				}
+			});
+
+			// draggable
+			$('.ns-block-types .block-type').draggable({
+				connectToSortable: '.block-area',
+				revert: 'invalid',
+				revertDuration: 200,
+				helper: 'clone'
+			});
+
+			// block removal
+			$('.block-area .block-type .block-remove').click(fnDeleteBlockHandler);
+			// block update
+			$('.block-area .block-type .block-update').click(fnUpdateBlockHandler);
+		});
+	</script>
+{% endblock %}
+
+{# BLOCK (OR BLOCK TYPE) TEMPLATE #}
+{% macro block_item(id, name, title) %}
+	<div class="block-type"
+		{%- if id %} data-id="{{ id }}"{% endif %}
+		{%- if name %} data-name="{{ name }}"{% endif %}>
+		<i class="icon-th-large"></i>
+		<span class="title">{{ title }}</span>
+		<div class="btn-group pull-right">
+			<a href="#" class="btn btn-mini block-update"><i class="icon-wrench"></i></a>
+			<a href="#" class="btn btn-mini block-remove"><i class="icon-remove"></i></a>
+		</div>
+	</div>
+{% endmacro %}
+
+{% block content %}
+	<h3>Управление страницами</h3>
+
+	<style type="text/css">
+		.block-area {
+			border: dashed 3px #eee;
+			border-radius: 10px;
+			margin: 0 0 20px 0;
+			overflow: hidden;
+			padding: 10px;
+		}
+		.block-type {
+			border: solid 1px transparent;
+			cursor: move;
+			height: 22px;
+			padding: 3px;
+		}
+		.block-type:hover {
+			background: #fff;
+			border: solid 1px #CCC;
+			border-radius: 5px;
+		}
+		.block-type .btn-group {
+			display: none;
+		}
+		.block-area .block-type:hover {
+			background: #f5f5f5;
+		}
+		.block-area .block-type:hover .btn-group {
+			display: inline;
+		}
+
+	</style>
+
+	<div class="row">
+		<div class="span3">
+			{% render 'NSCmsBundle:AdminPages:blockPagesTree' %}
+		</div>
+		<div class="span9">
+			{% include 'NSCmsBundle:AdminPages:block-page-tabs.html.twig' with {active: 'blocks', pageId: page.id} %}
+
+			<div class="row">
+				<div class="span6">
+					{% for area in template.areas %}
+						<h4>
+							{{ area.title }}
+							{% if area.fixed %}
+								<i class="icon-lock"></i>
+							{% endif %}
+						</h4>
+						<div class="block-area{% if area.fixed %} fixed{% endif %}" data-name="{{ area.name }}">
+							{% for block in blocks %}
+								{% if block.areaName == area.name %}
+									{{ _self.block_item(block.id, null, block.title) }}
+								{% endif %}
+							{% endfor %}
+						</div>
+					{% endfor %}
+				</div>
+				<div class="span3">
+					<div class="well ns-block-types">
+						<h4>Блоки</h4>
+						{% for blockType in blockTypes %}
+							{{ _self.block_item(null, blockType.name, blockType.title) }}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

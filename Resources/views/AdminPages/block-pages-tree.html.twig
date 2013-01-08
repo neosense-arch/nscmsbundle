@@ -1,0 +1,75 @@
+
+{# Node activation URL #}
+{% set activateUrl = url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'general' }) %}
+
+{# Node drop (reorder) URL #}
+{% set reorderUrl = url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'ajaxReorder' }) %}
+
+{# Tree JS #}
+<script type="text/javascript">
+	$(function(){
+		$("#tree").dynatree({
+			debugLevel: 0,
+			children: {{ pagesJson|raw }},
+			onPostInit: function() {
+				{% if pageId %}
+					var node = this.getNodeByKey('{{ pageId }}');
+					if (node) {
+						node.activateSilently();
+						if (node.hasChildren()) {
+							node.expand();
+						}
+					}
+				{% endif %}
+			},
+			onActivate: function(node) {
+				location.href = '{{ activateUrl }}?pageId=' + node.data.key;
+			},
+			dnd: {
+				preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+				onDragStart: function(node) {
+					return true;
+				},
+				onDragEnter: function(node, sourceNode) {
+					if(node.parent !== sourceNode.parent){
+						return false;
+					}
+					return ["before", "after"];
+				},
+				onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+					sourceNode.move(node, hitMode);
+
+					// new index
+					var index = $(sourceNode.getParent().getChildren()).index(sourceNode);
+
+					// saving position
+					$('#ns-loader').animate({'opacity': 1});
+					$.ajax({
+						'url': '{{ reorderUrl }}',
+						'data': {
+							'pageId': +sourceNode.data.key,
+							'position': index
+						}
+					})
+					.done(function(res){
+						if (res && typeof(res.error) != 'undefined') {
+							throw res.error;
+						}
+					})
+					.always(function(){
+						$('#ns-loader').animate({'opacity': 0});
+					});
+				}
+			}
+		});
+	});
+</script>
+
+<div class="well">
+	<div id="tree"></div>
+
+	<br>
+	<div class="btn-group">
+		<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'pages', adminAction: 'add' }) }}" class="btn">Добавить страницу</a>
+	</div>
+</div>
