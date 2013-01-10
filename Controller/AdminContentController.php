@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use NS\CmsBundle\Entity\Page;
 use NS\CmsBundle\Entity\PageRepository;
 
+use Doctrine\ORM\NoResultException;
+
 /**
  * Admin content controller
  *
@@ -24,9 +26,9 @@ class AdminContentController extends Controller
 	 */
 	public function indexAction()
     {
-		// redirects to first page settings
-		$page = $this->getPageRepository()->findFirstPage();
-		if ($page) {
+		try {
+			// redirects to first page settings
+			$page = $this->getPageRepository()->findFirstPage();
 			return $this->redirect($this->generateUrl(
 				'ns_admin_bundle', array(
 					'adminBundle' => 'NSCmsBundle',
@@ -35,15 +37,16 @@ class AdminContentController extends Controller
 				)
 			) . '?pageId=' . $page->getId());
 		}
-
-		// redirects to add page
-		return $this->redirect($this->generateUrl(
-			'ns_admin_bundle', array(
-				'adminBundle' => 'NSCmsBundle',
-				'adminController' => 'pages',
-				'adminAction' => 'form',
-			)
-		));
+		catch (NoResultException $e) {
+			// redirects to add page
+			return $this->redirect($this->generateUrl(
+				'ns_admin_bundle', array(
+					'adminBundle' => 'NSCmsBundle',
+					'adminController' => 'pages',
+					'adminAction' => 'form',
+				)
+			));
+		}
     }
 
 	/**
