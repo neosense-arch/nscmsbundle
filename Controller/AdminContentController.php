@@ -38,6 +38,9 @@ class AdminContentController extends Controller
 			) . '?pageId=' . $page->getId());
 		}
 		catch (NoResultException $e) {
+			// creating root page
+			$this->getPageRepository()->findRootPageOrCreate();
+
 			// redirects to add page
 			return $this->redirect($this->generateUrl(
 				'ns_admin_bundle', array(

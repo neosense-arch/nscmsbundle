@@ -176,7 +176,7 @@ class PageRepository extends NestedTreeRepository
 	 *
 	 * @return Page
 	 */
-	private function findRootPageOrCreate()
+	public function findRootPageOrCreate()
 	{
 		$root = $this->findRootPage();
 		if ($root) {
