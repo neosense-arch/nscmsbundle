@@ -71,8 +71,8 @@ class BlockManager
 	 * Retrieves block type by name
 	 *
 	 * @param string $name
+	 * @return BlockType
 	 * @throws \Exception
-	 * @return BlockType|null
 	 */
 	public function getBlockType($name)
 	{
@@ -91,6 +91,36 @@ class BlockManager
 	public function getSharedBlocks()
 	{
 		return $this->getBlockRepository()->findSharedBlocks();
+	}
+
+	/**
+	 * Retrieves block settings
+	 *
+	 * @param  Block $block
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function getBlockSettings(Block $block)
+	{
+		// retrieving block settings model
+		$blockType = $this->getBlockType($block->getTypeName());
+		$settingsModelClass = $blockType->getSettingsModelClass();
+
+		// empty settings
+		if (!$block->getSettings()) {
+			return new $settingsModelClass;
+		}
+
+		// stored settings
+		$settings = unserialize($block->getSettings());
+
+		// checking class hierarchy
+		if (!is_a($settings, $settingsModelClass)) {
+			$class = get_class($settings);
+			throw new \Exception("Settings object (block #{$block->getId()}) of class '{$class}' is not subclass of '{$settingsModelClass}'");
+		}
+
+		return $settings;
 	}
 
 	/**

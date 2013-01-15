@@ -1,3 +1,8 @@
-ns_cms_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: NSCmsBundle:Default:index }
+ns_cms_page:
+    pattern:  '/page/{id}'
+    defaults: { _controller: NSCmsBundle:Pages:page }
+    requirements: { id: \d+ }
+
+ns_cms_main:
+    pattern: '/'
+    defaults: { _controller: NSCmsBundle:Pages:main }

@@ -1,0 +1,25 @@
+<html>
+<body>
+	Page {{ page.title }}
+
+	<div>
+		<h1>Top area blocks (areaName='top')</h1>
+		{% for block in blocks %}
+			{% if block.areaName == 'top' %}
+				<div>{{ block.typeName }}</div>
+				{% render block.typeName with { block: block } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	<div>
+		<h1>Content area blocks (areaName='content')</h1>
+		{% for block in blocks %}
+			{% if block.areaName == 'content' %}
+				<div>{{ block.typeName }}</div>
+				{% render block.typeName with { block: block } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+</body>
+</html>

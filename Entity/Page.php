@@ -93,6 +93,13 @@ class Page
 	private $position;
 
 	/**
+	 * @var Block[]
+	 * @ORM\OneToMany(targetEntity="Block", mappedBy="page")
+	 * @ORM\OrderBy({"areaName" = "ASC", "position" = "ASC"})
+	 */
+	private $blocks;
+
+	/**
 	 * @param ArrayCollection $children
 	 */
 	public function setChildren($children)
@@ -236,5 +243,21 @@ class Page
 	public function getPosition()
 	{
 		return $this->position;
+	}
+
+	/**
+	 * @param $blocks
+	 */
+	public function setBlocks($blocks)
+	{
+		$this->blocks = $blocks;
+	}
+
+	/**
+	 * @return Block[]
+	 */
+	public function getBlocks()
+	{
+		return $this->blocks;
 	}
 }

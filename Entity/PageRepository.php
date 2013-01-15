@@ -145,6 +145,27 @@ class PageRepository extends NestedTreeRepository
 	}
 
 	/**
+	 * Retrieves main page
+	 *
+	 * @return Page|null
+	 */
+	public function findMainPage()
+	{
+		return $this->findPageByName('main');
+	}
+
+	/**
+	 * Retrieves page by name
+	 *
+	 * @param  string $name
+	 * @return Page|null
+	 */
+	public function findPageByName($name)
+	{
+		return $this->findOneBy(array('name' => $name));
+	}
+
+	/**
 	 * Retrieves root page
 	 *
 	 * @return Page|null

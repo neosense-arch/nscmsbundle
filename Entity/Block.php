@@ -61,7 +61,7 @@ class Block
 	/**
 	 * @var Page
 	 * @Gedmo\SortableGroup
-	 * @ORM\ManyToOne(targetEntity="Page")
+	 * @ORM\ManyToOne(targetEntity="Page", inversedBy="blocks")
 	 * @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	private $page;
