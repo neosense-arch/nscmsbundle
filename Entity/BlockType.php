@@ -53,9 +53,6 @@ class BlockType
 		if (empty($data['title'])) {
 			throw new \InvalidArgumentException("Required param 'title' wasn't found");
 		}
-		if (empty($data['form'])) {
-			throw new \InvalidArgumentException("Required param 'form' wasn't found");
-		}
 		if (empty($data['template'])) {
 			throw new \InvalidArgumentException("Required param 'template' wasn't found");
 		}
@@ -69,7 +66,6 @@ class BlockType
 		$block = new self();
 		$block->setName($data['name']);
 		$block->setTitle($data['title']);
-		$block->setFormName($data['form']);
 		$block->setTemplate($data['template']);
 		$block->setSettingFormClass($data['settingsFormClass']);
 		$block->setSettingsModelClass($data['settingsModelClass']);
