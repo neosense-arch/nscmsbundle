@@ -47,6 +47,23 @@ class PagesController extends Controller
 	}
 
 	/**
+	 * Page view by name action
+	 *
+	 * @param  string $name
+	 * @return Response
+	 */
+	public function pageNameAction($name)
+	{
+		$page = $this->getPageRepository()->findPageByName($name);
+		if (!$page) {
+			// @todo 404
+			return $this->redirect($this->generateUrl('ns_cms_main'));
+		}
+
+		return $this->getPageResponse($page);
+	}
+
+	/**
 	 * @param  Page $page
 	 * @return Response
 	 */

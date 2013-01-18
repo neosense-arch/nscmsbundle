@@ -3,6 +3,10 @@ ns_cms_page:
     defaults: { _controller: NSCmsBundle:Pages:page }
     requirements: { id: \d+ }
 
+ns_cms_page_name:
+    pattern:  '/page/{name}'
+    defaults: { _controller: NSCmsBundle:Pages:pageName }
+
 ns_cms_main:
     pattern: '/'
     defaults: { _controller: NSCmsBundle:Pages:main }
