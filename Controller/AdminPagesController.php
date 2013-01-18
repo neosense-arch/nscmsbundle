@@ -54,6 +54,21 @@ class AdminPagesController extends Controller
 	}
 
 	/**
+	 * Adds new page
+	 *
+	 * @return RedirectResponse
+	 */
+	public function addAction()
+	{
+		$page = $this->getPageRepository()->createDefaultPage();
+		return $this->redirect($this->generateUrl('ns_admin_bundle', array(
+			'adminBundle'     => 'NSCmsBundle',
+			'adminController' => 'pages',
+			'adminAction'     => 'general'
+		)) . '?pageId=' . $page->getId());
+	}
+
+	/**
 	 * @return Response
 	 */
 	public function formAction()

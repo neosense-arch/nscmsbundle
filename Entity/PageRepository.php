@@ -125,6 +125,25 @@ class PageRepository extends NestedTreeRepository
 	}
 
 	/**
+	 * Creates new default page
+	 *
+	 * @return Page
+	 */
+	public function createDefaultPage()
+	{
+		$page = new Page();
+		$page->setParent($this->findRootPageOrCreate());
+		$page->setTitle('no-title');
+
+		$this->savePage($page);
+
+		$page->setTitle('Новая страница №' . $page->getId());
+		$this->savePage($page);
+
+		return $page;
+	}
+
+	/**
 	 * Saves page
 	 *
 	 * @param  Page $page
