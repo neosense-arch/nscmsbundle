@@ -58,6 +58,9 @@ class PageNode implements NodeInterface
 			'label'   => $this->page->getTitle(),
 			'display' => $this->page->isVisible(),
 			'uri'     => $this->getUrl(),
+			'extras'  => array(
+				'page' => $this->page,
+			),
 		);
 	}
 
