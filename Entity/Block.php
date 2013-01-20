@@ -80,6 +80,12 @@ class Block
 	private $shared;
 
 	/**
+	 * Rendered HTML CAN BE NULL
+	 * @var string
+	 */
+	private $html;
+
+	/**
 	 * @param string $areaName
 	 */
 	private function setAreaName($areaName)
@@ -240,5 +246,21 @@ class Block
 	public function isShared()
 	{
 		return $this->shared;
+	}
+
+	/**
+	 * @param string $html
+	 */
+	public function setHtml($html)
+	{
+		$this->html = $html;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHtml()
+	{
+		return $this->html;
 	}
 }

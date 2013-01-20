@@ -3,7 +3,9 @@
 namespace NS\CmsBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 
 use NS\CmsBundle\Entity\Page;
 use NS\CmsBundle\Entity\PageRepository;
@@ -69,6 +71,21 @@ class PagesController extends Controller
 	 */
 	private function getPageResponse(Page $page)
 	{
+		/** @var $kernel Kernel */
+		$kernel = $this->container->get('kernel');
+
+		// rendering blocks
+		foreach ($this->getBlockManager()->getPageBlocks($page) as $block) {
+			// new request
+			$request = clone $this->getRequest();
+			$request->attributes->set('block', $block);
+			$request->attributes->set('_controller', $block->getTypeName());
+
+			// rendering
+			$response = $kernel->handle($request);
+			$block->setHtml($response->getContent());
+		}
+
 		return $this->render('NSCmsBundle:Pages:page.html.twig', array(
 			'page'   => $page,
 			'blocks' => $this->getBlockManager()->getPageBlocks($page),
