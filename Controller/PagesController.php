@@ -79,6 +79,7 @@ class PagesController extends Controller
 			// new request
 			$request = clone $this->getRequest();
 			$request->attributes->set('block', $block);
+			$request->attributes->set('page', $page);
 			$request->attributes->set('_controller', $block->getTypeName());
 
 			// rendering

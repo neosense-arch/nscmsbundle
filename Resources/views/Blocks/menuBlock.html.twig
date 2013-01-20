@@ -1,0 +1,26 @@
+<h2>{{ block.title }}</h2>
+
+{% macro menu_items(items, matcher) %}
+	{% for item in items %}
+		{% if item.displayed %}
+			<li>
+				{% if matcher.isCurrent(item) or matcher.isAncestor(item) %}
+					<b><a href="{{ item.uri }}">{{ item.label }}</a></b>
+				{% else %}
+					<a href="{{ item.uri }}">{{ item.label }}</a>
+				{% endif %}
+				{% if item.hasChildren %}
+					<ul>
+						{{ _self.menu_items(item.children, matcher) }}
+					</ul>
+				{% endif %}
+			</li>
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+<div>
+	<ul>
+		{{ _self.menu_items(menu.children, matcher) }}
+	</ul>
+</div>
