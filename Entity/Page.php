@@ -100,6 +100,12 @@ class Page
 	private $blocks;
 
 	/**
+	 * @ORM\Column(type="boolean")
+	 * @var boolean
+	 */
+	private $visible = true;
+
+	/**
 	 * @param ArrayCollection $children
 	 */
 	public function setChildren($children)
@@ -259,5 +265,21 @@ class Page
 	public function getBlocks()
 	{
 		return $this->blocks;
+	}
+
+	/**
+	 * @param boolean $visible
+	 */
+	public function setVisible($visible =  true)
+	{
+		$this->visible = $visible;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isVisible()
+	{
+		return $this->visible;
 	}
 }

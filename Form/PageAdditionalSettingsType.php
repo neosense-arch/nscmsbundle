@@ -44,6 +44,10 @@ class PageAdditionalSettingsType extends AbstractType
 				'required'    => false,
 				'empty_value' => '[ Не выбрано ]',
 			))
+			->add('visible', null, array(
+				'label'    => 'Отображать в меню',
+				'required' => false,
+			))
         ;
     }
 
