@@ -13,7 +13,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class PageNode implements NodeInterface
 {
-	const PAGE_ROUTE = 'ns_cms_page';
+	const PAGE_ID_ROUTE   = 'ns_cms_page';
+	const PAGE_NAME_ROUTE = 'ns_cms_page_name';
 
 	/**
 	 * @var Page
@@ -85,7 +86,15 @@ class PageNode implements NodeInterface
 	 */
 	private function getUrl()
 	{
-		return $this->router->generate(self::PAGE_ROUTE, array(
+		// named route
+		if ($this->page->getName()) {
+			return $this->router->generate(self::PAGE_NAME_ROUTE, array(
+				'name' => $this->page->getName(),
+			));
+		}
+
+		// numeric route
+		return $this->router->generate(self::PAGE_ID_ROUTE, array(
 			'id' => $this->page->getId(),
 		));
 	}
