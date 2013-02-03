@@ -75,6 +75,8 @@ class PagesController extends Controller
 		$kernel = $this->container->get('kernel');
 
 		// rendering blocks
+		$headers = array();
+		$cookies = array();
 		foreach ($this->getBlockManager()->getPageBlocks($page) as $block) {
 			// new request
 			$request = clone $this->getRequest();
@@ -85,12 +87,31 @@ class PagesController extends Controller
 			// rendering
 			$response = $kernel->handle($request);
 			$block->setHtml($response->getContent());
+
+			// merging headers
+			$headers = array_merge($headers, $response->headers->all());
+
+			// cookies
+			$cookies = array_merge($cookies, $response->headers->getCookies());
 		}
 
-		return $this->render('NSCmsBundle:Pages:page.html.twig', array(
+		// rendering
+		$response = $this->render('NSCmsBundle:Pages:page.html.twig', array(
 			'page'   => $page,
 			'blocks' => $this->getBlockManager()->getPageBlocks($page),
 		));
+
+		// headers
+		$headers = array_merge($response->headers->all(), $headers);
+		$response->headers->replace($headers);
+
+		// cookies
+		$cookies = array_merge($response->headers->getCookies(), $cookies);
+		foreach ($cookies as $cookie) {
+			$response->headers->setCookie($cookie);
+		}
+
+		return $response;
 	}
 
 	/**
