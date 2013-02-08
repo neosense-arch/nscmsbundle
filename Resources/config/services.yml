@@ -6,8 +6,11 @@ parameters:
     ns_cms.form.type.template_path.class:     NS\CmsBundle\Form\Type\TemplatePathType
     ns_cms.manager.template.class:            NS\CmsBundle\Manager\TemplateManager
     ns_cms.manager.block.class:               NS\CmsBundle\Manager\BlockManager
-    ns_cms.search.mapper.content.class:       NS\CmsBundle\Search\ContentMapper
-    ns_cms.search.repository.content.class:   NS\CmsBundle\Search\ContentRepository
+
+    # search agent classes
+    ns_cms.search.content.model.class:        'NSCmsBundle:Block'
+    ns_cms.search.content.mapper.class:       NS\CmsBundle\Search\ContentMapper
+    ns_cms.search.content.repository.class:   NS\CmsBundle\Search\ContentRepository
 
 services:
     ns_cms.repository.template:
@@ -45,14 +48,15 @@ services:
             - [setBlockRepository, [@ns_cms.repository.block]]
             - [setBlockTypeRepository, [@ns_cms.repository.blocktype]]
 
-    ns_cms.search.agent.content:
+    # Content search agent
+    ns_cms.search.content.agent:
         class: %ns_search.agent.class%
-        arguments: [@ns_cms.search.mapper.content, @ns_cms.search.repository.content]
+        arguments: [%ns_cms.search.content.model.class%, @ns_cms.search.content.mapper, @ns_cms.search.content.repository]
         tags:
             - { name: ns_search.agent }
 
-    ns_cms.search.mapper.content:
-        class: %ns_cms.search.mapper.content.class%
+    ns_cms.search.content.mapper:
+        class: %ns_cms.search.content.mapper.class%
 
-    ns_cms.search.repository.content:
-        class: %ns_cms.search.repository.content.class%
+    ns_cms.search.content.repository:
+        class: %ns_cms.search.content.repository.class%
