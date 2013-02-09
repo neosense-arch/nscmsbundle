@@ -45,7 +45,44 @@ class BlockRepository extends EntityRepository
 	 */
 	public function findBlocksByTypeName($typeName)
 	{
-		return $this->findBy(array('typeName' => $typeName));
+		$query = $this->_em->createQuery("
+			SELECT b, p
+			FROM NSCmsBundle:Block b
+			JOIN b.page p
+			WHERE b.typeName = :typeName
+			ORDER BY b.areaName, b.position
+		");
+
+		$params = array(
+			'typeName' => $typeName,
+		);
+
+		return $query->execute($params);
+	}
+
+	/**
+	 * Retrieves blocks by type name and ID array
+	 *
+	 * @param  string $typeName
+	 * @param  int[]  $ids
+	 * @return Block[]
+	 */
+	public function findBlocksByTypeNameAndIds($typeName, array $ids)
+	{
+		$query = $this->_em->createQuery("
+			SELECT b, p
+			FROM NSCmsBundle:Block b
+			JOIN b.page p
+			WHERE b.typeName = :typeName AND b.id IN (:ids)
+			ORDER BY b.areaName, b.position
+		");
+
+		$params = array(
+			'typeName' => $typeName,
+			'ids'      => $ids,
+		);
+
+		return $query->execute($params);
 	}
 
 	/**

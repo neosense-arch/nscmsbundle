@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Knp\Menu\NodeInterface;
+use NS\SearchBundle\Agent\ModelInterface;
 
 /**
  * Block entity
@@ -14,7 +15,7 @@ use Knp\Menu\NodeInterface;
  * @ORM\Table(name="ns_cms_blocks")
  * @ORM\Entity(repositoryClass="BlockRepository")
  */
-class Block
+class Block implements ModelInterface
 {
 	/**
 	 * @var int
@@ -85,6 +86,14 @@ class Block
 	 * @var string
 	 */
 	private $html;
+
+	/**
+	 * @return mixed
+	 */
+	public function getSearchModelId()
+	{
+		return $this->getId();
+	}
 
 	/**
 	 * @param string $areaName

@@ -2,11 +2,12 @@
 
 namespace NS\CmsBundle\Search;
 
+use NS\CmsBundle\Entity\Block;
 use NS\CmsBundle\Block\Settings\ContentBlockSettingsModel;
 use NS\CmsBundle\Manager\BlockManager;
 use NS\SearchBundle\Agent\MapperInterface;
 use NS\SearchBundle\Models\Document;
-use NS\CmsBundle\Entity\Block;
+use NS\SearchBundle\Models\DocumentView;
 
 class ContentMapper implements MapperInterface
 {
@@ -26,20 +27,44 @@ class ContentMapper implements MapperInterface
 	/**
 	 * Retrieves document by model
 	 *
-	 * @param  Block $model
+	 * @param  Block $block
 	 * @return Document
 	 */
-	public function getDocumentByModel($model)
+	public function getDocumentByModel($block)
 	{
 		/** @var $settings ContentBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($model);
-		$settings->getContent();
+		$settings = $this->getBlockManager()->getBlockSettings($block);
 
 		return new Document(
-			$model->getId(),
-			'NSCmsBundle:Block',
-			$model->getTitle(),
+			$block->getId(),
+			'ns_cms:content',
+			$block->getTitle(),
 			$settings->getContent()
+		);
+	}
+
+	/**
+	 * Retrieves document view by model
+	 *
+	 * @param  Block $block
+	 * @return DocumentView
+	 */
+	public function getDocumentViewByModel($block)
+	{
+		/** @var $settings ContentBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		$description = $settings->getContent();
+		$description = str_replace(array("\n", "\r"), array(' ', ''), $description);
+		$description = strip_tags($description);
+		$description = preg_replace('/\s+/u', ' ',$description);
+		$description = html_entity_decode($description);
+		$description = mb_substr($description, 0, 300, 'utf-8');
+
+		return new DocumentView(
+			$block->getPage()->getTitle(),
+			$description,
+			$block
 		);
 	}
 

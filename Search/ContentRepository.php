@@ -30,7 +30,23 @@ class ContentRepository implements RepositoryInterface
 	 */
 	public function findAllModels()
 	{
-		$blocks = $this->getBlockRepository()->findBlocksByTypeName(self::CONTENT_BLOCK_TYPE_NAME);
+		$blocks = $this->getBlockRepository()
+			->findBlocksByTypeName(self::CONTENT_BLOCK_TYPE_NAME);
+
+		return new ModelCollection($blocks);
+	}
+
+	/**
+	 * Retrieves models by ID array
+	 *
+	 * @param  int[] $ids
+	 * @return ModelCollection
+	 */
+	public function findModelsByIds(array $ids)
+	{
+		$blocks = $this->getBlockRepository()
+			->findBlocksByTypeNameAndIds(self::CONTENT_BLOCK_TYPE_NAME, $ids);
+
 		return new ModelCollection($blocks);
 	}
 
