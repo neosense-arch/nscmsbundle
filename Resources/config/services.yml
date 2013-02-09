@@ -51,12 +51,19 @@ services:
     # Content search agent
     ns_cms.search.content.agent:
         class: %ns_search.agent.class%
-        arguments: [%ns_cms.search.content.model.class%, @ns_cms.search.content.mapper, @ns_cms.search.content.repository]
+        arguments:
+            - %ns_cms.search.content.model.class%
+            - @ns_cms.search.content.mapper
+            - @ns_cms.search.content.repository
         tags:
             - { name: ns_search.agent }
 
     ns_cms.search.content.mapper:
         class: %ns_cms.search.content.mapper.class%
+        arguments:
+            - @ns_cms.manager.block
 
     ns_cms.search.content.repository:
         class: %ns_cms.search.content.repository.class%
+        arguments:
+            - @ns_cms.repository.block

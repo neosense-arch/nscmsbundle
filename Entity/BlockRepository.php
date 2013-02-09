@@ -40,6 +40,15 @@ class BlockRepository extends EntityRepository
 	}
 
 	/**
+	 * @param  string $typeName
+	 * @return Block[]
+	 */
+	public function findBlocksByTypeName($typeName)
+	{
+		return $this->findBy(array('typeName' => $typeName));
+	}
+
+	/**
 	 * Retrieves shared blocks
 	 *
 	 * @return Block[]
