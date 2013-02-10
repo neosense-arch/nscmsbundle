@@ -9,7 +9,7 @@ parameters:
 
     # search agent classes
     ns_cms.search.content.type:               'ns_cms:content'
-    ns_cms.search.content.model.class:        'NSCmsBundle:Block'
+    ns_cms.search.content.model.class:        'NS\CmsBundle\Entity\Block'
     ns_cms.search.content.mapper.class:       'NS\CmsBundle\Search\ContentMapper'
     ns_cms.search.content.repository.class:   'NS\CmsBundle\Search\ContentRepository'
 
