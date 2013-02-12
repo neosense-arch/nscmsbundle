@@ -28,12 +28,16 @@ class ContentMapper implements MapperInterface
 	 * Retrieves document by model
 	 *
 	 * @param  Block $block
-	 * @return Document
+	 * @return Document|null
 	 */
 	public function getDocumentByModel($block)
 	{
 		/** @var $settings ContentBlockSettingsModel */
 		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		if (!method_exists($settings, 'getContent')) {
+			return null;
+		}
 
 		return new Document(
 			$block->getId(),
