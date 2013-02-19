@@ -3,7 +3,7 @@
 {% block content %}
 	<h3>Редактирование блока</h3>
 
-	{% include 'NSCmsBundle:AdminBLocks:_tabs.html.twig' with {active: 'settings', blockId: block.id, redirect: redirect} %}
+	{% include 'NSCmsBundle:AdminBlocks:_tabs.html.twig' with {active: 'settings', blockId: block.id, redirect: redirect} %}
 
 	<form method="post" {{ form_enctype(form) }} autocomplete="off">
 		{{ form_errors(form) }}
