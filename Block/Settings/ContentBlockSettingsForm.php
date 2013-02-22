@@ -2,11 +2,10 @@
 
 namespace NS\CmsBundle\Block\Settings;
 
+use NS\AdminBundle\Form\Type\TinyMceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use NS\AdminBundle\Form\Type\ElrteType;
 
 /**
  * Content block settings form
@@ -23,7 +22,7 @@ class ContentBlockSettingsForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
 		$builder
-			->add('content', new ElrteType(), array(
+			->add('content', new TinyMceType(), array(
 				'label'    => 'Контент',
 				'required' => false,
 			))

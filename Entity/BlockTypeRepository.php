@@ -2,22 +2,33 @@
 
 namespace NS\CmsBundle\Entity;
 
-use Symfony\Component\DependencyInjection\ContainerAware;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use NS\AdminBundle\Service\AdminService;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Blocks repository
  *
  */
-class BlockTypeRepository extends ContainerAware
+class BlockTypeRepository
 {
 	/**
 	 * Templates filename
 	 * @var string
 	 */
-	const TEMPLATES_CONFIG_FILENAME = 'ns_cms.blocks.yml';
+	const TEMPLATES_CONFIG_FILENAME = 'Resources/config/ns_cms.blocks.yml';
+
+	/**
+	 * @var AdminService
+	 */
+	private $adminService;
+
+	/**
+	 * @param AdminService $adminService
+	 */
+	public function __construct(AdminService $adminService)
+	{
+		$this->adminService = $adminService;
+	}
 
 	/**
 	 * Retrieves all blocks
@@ -29,12 +40,8 @@ class BlockTypeRepository extends ContainerAware
 	{
 		$blocks = array();
 
-		/**
-		 * adding bundles' blocks
-		 * @var $bundle Bundle
-		 */
-		foreach ($this->getKernel()->getBundles() as $bundle) {
-			$fileName = $bundle->getPath() . '/Resources/config/' . self::TEMPLATES_CONFIG_FILENAME;
+		foreach ($this->adminService->getActiveBundles() as $bundle) {
+			$fileName = $bundle->getPath() . '/' . self::TEMPLATES_CONFIG_FILENAME;
 			if (file_exists($fileName)) {
 				$blocks = array_merge($blocks, $this->createBlockTypesFromYml($fileName));
 			}
@@ -84,13 +91,5 @@ class BlockTypeRepository extends ContainerAware
 		}
 
 		return $blocks;
-	}
-
-	/**
-	 * @return Kernel
-	 */
-	private function getKernel()
-	{
-		return $this->container->get('kernel');
 	}
 }

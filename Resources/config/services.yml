@@ -21,8 +21,7 @@ services:
 
     ns_cms.repository.blocktype:
         class: %ns_cms.repository.blocktype.class%
-        calls:
-            - [setContainer, ["@service_container"]]
+        arguments: [@ns_admin.service]
 
     ns_cms.repository.block:
         class: %ns_cms.repository.block.class%
