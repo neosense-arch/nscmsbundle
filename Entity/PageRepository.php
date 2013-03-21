@@ -170,7 +170,7 @@ class PageRepository extends NestedTreeRepository
 	 */
 	public function findMainPage()
 	{
-		return $this->findPageByName('main');
+		return $this->findPageByName(Page::MAIN_PAGE_NAME);
 	}
 
 	/**

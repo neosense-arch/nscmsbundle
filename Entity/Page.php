@@ -17,6 +17,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Page
 {
+	const MAIN_PAGE_NAME = 'main';
+
 	/**
 	 * @var int
 	 * @ORM\Id
@@ -281,5 +283,13 @@ class Page
 	public function isVisible()
 	{
 		return $this->visible;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isMain()
+	{
+		return $this->getName() === self::MAIN_PAGE_NAME;
 	}
 }
