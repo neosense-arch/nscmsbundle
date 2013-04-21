@@ -106,6 +106,11 @@ class BlockManager
 		$blockType = $this->getBlockType($block->getTypeName());
 		$settingsModelClass = $blockType->getSettingsModelClass();
 
+		// checking if class exists
+		if (!class_exists($settingsModelClass)) {
+			throw new \Exception("Settings model class '{$settingsModelClass}' wasn't found");
+		}
+
 		// empty settings
 		if (!$block->getSettings()) {
 			return new $settingsModelClass;
