@@ -187,6 +187,9 @@
 		.block-area .block-type:hover .btn-group {
 			display: inline;
 		}
+		.block-area.fixed {
+			background: #f9f9f9;
+		}
 
 	</style>
 
@@ -200,18 +203,20 @@
 			<div class="row">
 				<div class="span6">
 					{% for area in template.areas %}
-						<h4>
-							{{ area.title }}
-							{% if area.fixed %}
-								<i class="icon-lock"></i>
-							{% endif %}
-						</h4>
-						<div class="block-area{% if area.fixed %} fixed{% endif %}" data-name="{{ area.name }}">
-							{% for block in blocks %}
-								{% if block.areaName == area.name %}
-									{{ _self.block_item(block.id, null, block.title) }}
+						<div class="block-area-container{% if area.fixed %} fixed{% endif %}">
+							<h4>
+								{{ area.title }}
+								{% if area.fixed %}
+									<i class="icon-globe"></i>
 								{% endif %}
-							{% endfor %}
+							</h4>
+							<div class="block-area{% if area.fixed %} fixed{% endif %}" data-name="{{ area.name }}">
+								{% for block in blocks %}
+									{% if block.areaName == area.name %}
+										{{ _self.block_item(block.id, null, block.title) }}
+									{% endif %}
+								{% endfor %}
+							</div>
 						</div>
 					{% endfor %}
 				</div>
