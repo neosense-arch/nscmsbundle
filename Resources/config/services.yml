@@ -1,11 +1,11 @@
 parameters:
-    ns_cms.repository.template.class:         NS\CmsBundle\Entity\TemplateRepository
-    ns_cms.repository.blocktype.class:        NS\CmsBundle\Entity\BlockTypeRepository
-    ns_cms.repository.block.class:            NS\CmsBundle\Entity\BlockRepository
+    ns_cms.repository.template.class:         'NS\CmsBundle\Entity\TemplateRepository'
+    ns_cms.repository.blocktype.class:        'NS\CmsBundle\Entity\BlockTypeRepository'
+    ns_cms.repository.block.class:            'NS\CmsBundle\Entity\BlockRepository'
     ns_cms.repository.block.factory_argument: 'NSCmsBundle:Block'
-    ns_cms.form.type.template_path.class:     NS\CmsBundle\Form\Type\TemplatePathType
-    ns_cms.manager.template.class:            NS\CmsBundle\Manager\TemplateManager
-    ns_cms.manager.block.class:               NS\CmsBundle\Manager\BlockManager
+    ns_cms.form.type.template_path.class:     'NS\CmsBundle\Form\Type\TemplatePathType'
+    ns_cms.manager.template.class:            'NS\CmsBundle\Manager\TemplateManager'
+    ns_cms.manager.block.class:               'NS\CmsBundle\Manager\BlockManager'
 
     # search agent classes
     ns_cms.search.content.type:               'ns_cms:content'

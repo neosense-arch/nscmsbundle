@@ -194,12 +194,17 @@ class AdminBlocksController extends Controller
 		$blockType = $this->getBlockManager()->getBlockType($block->getTypeName());
 
 		// form type
-		$formTypeClass = $blockType->getSettingFormClass();
-		$formType = new $formTypeClass();
+		if (!$blockType->getSettingFormClass()) {
+			return $this->redirect($this->generateUrl('ns_admin_bundle', array(
+				'adminBundle'     => 'NSCmsBundle',
+				'adminController' => 'blocks',
+				'adminAction'     => 'general',
+			)) . '?blockId=' . $block->getId() . '&redirect=' . $this->getRedirectUri());
+		}
+		$formType = $blockType->createSettingsFormType();
 
 		// retrieving settings model
-		$settingsModelClass = $blockType->getSettingsModelClass();
-		$settingsModel = new $settingsModelClass;
+		$settingsModel = $blockType->createSettingsModel();
 		if ($block->getSettings()) {
 			$settingsModel = unserialize($block->getSettings());
 		}

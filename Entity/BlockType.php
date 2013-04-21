@@ -50,25 +50,23 @@ class BlockType
 		if (empty($data['name'])) {
 			throw new \InvalidArgumentException("Required param 'name' wasn't found");
 		}
-		if (empty($data['title'])) {
-			throw new \InvalidArgumentException("Required param 'title' wasn't found");
-		}
-		if (empty($data['template'])) {
-			throw new \InvalidArgumentException("Required param 'template' wasn't found");
-		}
-		if (empty($data['settingsFormClass'])) {
-			throw new \InvalidArgumentException("Required param 'settingsFormClass' wasn't found");
-		}
-		if (empty($data['settingsModelClass'])) {
-			throw new \InvalidArgumentException("Required param 'settingsModelClass' wasn't found");
-		}
 
 		$block = new self();
 		$block->setName($data['name']);
-		$block->setTitle($data['title']);
-		$block->setTemplate($data['template']);
-		$block->setSettingFormClass($data['settingsFormClass']);
-		$block->setSettingsModelClass($data['settingsModelClass']);
+		$block->setTitle($data['name']);
+
+		if (!empty($data['title'])) {
+			$block->setTitle($data['title']);
+		}
+		if (!empty($data['template'])) {
+			$block->setTemplate($data['template']);
+		}
+		if (!empty($data['settingsFormClass'])) {
+			$block->setSettingFormClass($data['settingsFormClass']);
+		}
+		if (!empty($data['settingsModelClass'])) {
+			$block->setSettingsModelClass($data['settingsModelClass']);
+		}
 
 		return $block;
 	}
@@ -171,6 +169,32 @@ class BlockType
 	public function getSettingsModelClass()
 	{
 		return $this->settingsModelClass;
+	}
+
+	/**
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function createSettingsModel()
+	{
+		$className = $this->getSettingsModelClass();
+		if (!class_exists($className)) {
+			throw new \Exception("Settings model class '{$className}' wasn't found");
+		}
+		return new $className();
+	}
+
+	/**
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function createSettingsFormType()
+	{
+		$className = $this->getSettingFormClass();
+		if (!class_exists($className)) {
+			throw new \Exception("Settings form class '{$className}' wasn't found");
+		}
+		return new $className();
 	}
 
 }

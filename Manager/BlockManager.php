@@ -97,7 +97,7 @@ class BlockManager
 	 * Retrieves block settings
 	 *
 	 * @param  Block $block
-	 * @return mixed
+	 * @return mixed|null
 	 * @throws \Exception
 	 */
 	public function getBlockSettings(Block $block)
@@ -105,6 +105,11 @@ class BlockManager
 		// retrieving block settings model
 		$blockType = $this->getBlockType($block->getTypeName());
 		$settingsModelClass = $blockType->getSettingsModelClass();
+
+		// checking if settings exists
+		if (!$settingsModelClass) {
+			return null;
+		}
 
 		// checking if class exists
 		if (!class_exists($settingsModelClass)) {
