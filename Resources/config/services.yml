@@ -6,6 +6,7 @@ parameters:
     ns_cms.form.type.template_path.class:     'NS\CmsBundle\Form\Type\TemplatePathType'
     ns_cms.manager.template.class:            'NS\CmsBundle\Manager\TemplateManager'
     ns_cms.manager.block.class:               'NS\CmsBundle\Manager\BlockManager'
+    ns_cms.twig.extension.area.class:         'NS\CmsBundle\Twig\Extension\AreaExtension'
 
     # search agent classes
     ns_cms.search.content.type:               'ns_cms:content'
@@ -47,6 +48,11 @@ services:
         calls:
             - [setBlockRepository, [@ns_cms.repository.block]]
             - [setBlockTypeRepository, [@ns_cms.repository.blocktype]]
+
+    ns_cms.twig.extension.area:
+        class: %ns_cms.twig.extension.area.class%
+        tags:
+            - { name: twig.extension }
 
     # Content search agent
     ns_cms.search.content.agent:
