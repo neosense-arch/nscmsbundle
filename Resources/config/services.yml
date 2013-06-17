@@ -3,6 +3,8 @@ parameters:
     ns_cms.repository.blocktype.class:        'NS\CmsBundle\Entity\BlockTypeRepository'
     ns_cms.repository.block.class:            'NS\CmsBundle\Entity\BlockRepository'
     ns_cms.repository.block.factory_argument: 'NSCmsBundle:Block'
+    ns_cms.repository.page.class:             'NS\CmsBundle\Entity\PageRepository'
+    ns_cms.repository.page.factory_argument:  'NSCmsBundle:Page'
     ns_cms.form.type.template_path.class:     'NS\CmsBundle\Form\Type\TemplatePathType'
     ns_cms.manager.template.class:            'NS\CmsBundle\Manager\TemplateManager'
     ns_cms.manager.block.class:               'NS\CmsBundle\Manager\BlockManager'
@@ -30,6 +32,13 @@ services:
         factory_method: getRepository
         arguments:
             - %ns_cms.repository.block.factory_argument%
+
+    ns_cms.repository.page:
+        class: %ns_cms.repository.page.class%
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: getRepository
+        arguments:
+            - %ns_cms.repository.page.factory_argument%
 
     ns_cms.form.type.template_path:
         class: %ns_cms.form.type.template_path.class%
