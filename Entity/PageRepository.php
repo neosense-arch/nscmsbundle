@@ -63,6 +63,17 @@ class PageRepository extends NestedTreeRepository
 	}
 
 	/**
+	 * Retrieves page by name
+	 *
+	 * @param  string $name
+	 * @return Page|null
+	 */
+	public function findOneByName($name)
+	{
+		return $this->findOneBy(array('name' => $name));
+	}
+
+	/**
 	 * Retrieves pages by ids
 	 *
 	 * @param  int[] $ids
@@ -178,10 +189,12 @@ class PageRepository extends NestedTreeRepository
 	 *
 	 * @param  string $name
 	 * @return Page|null
+	 *
+	 * @deprecated use findOneByName
 	 */
 	public function findPageByName($name)
 	{
-		return $this->findOneBy(array('name' => $name));
+		return $this->findOneByName($name);
 	}
 
 	/**
