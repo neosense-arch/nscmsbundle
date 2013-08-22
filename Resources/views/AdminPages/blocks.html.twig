@@ -222,8 +222,12 @@
 				</div>
 				<div class="span3">
 					<div class="well ns-block-types">
-						<h4>Блоки</h4>
+						{% set bundle = null %}
 						{% for blockType in blockTypes %}
+							{% if bundle != blockType.bundle %}
+								{% set bundle = blockType.bundle %}
+								<h4>{{ bundle.name }}</h4>
+							{% endif %}
 							{{ _self.block_item(null, blockType.name, blockType.title) }}
 						{% endfor %}
 					</div>
