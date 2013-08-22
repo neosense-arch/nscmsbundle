@@ -2,6 +2,8 @@
 
 namespace NS\CmsBundle\Entity;
 
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
 /**
  * Block entity
  *
@@ -37,6 +39,11 @@ class BlockType
 	 * @var string
 	 */
 	private $settingsModelClass;
+
+	/**
+	 * @var Bundle
+	 */
+	private $bundle;
 
 	/**
 	 * Creates block from array
@@ -169,6 +176,20 @@ class BlockType
 	public function getSettingsModelClass()
 	{
 		return $this->settingsModelClass;
+	}
+	/**
+	 * @param Bundle $bundle
+	 */
+	public function setBundle(Bundle $bundle)
+	{
+		$this->bundle = $bundle;
+	}
+	/**
+	 * @return Bundle
+	 */
+	public function getBundle()
+	{
+		return $this->bundle;
 	}
 
 	/**

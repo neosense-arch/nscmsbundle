@@ -3,6 +3,7 @@
 namespace NS\CmsBundle\Entity;
 
 use NS\AdminBundle\Service\AdminService;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -43,7 +44,7 @@ class BlockTypeRepository
 		foreach ($this->adminService->getActiveBundles() as $bundle) {
 			$fileName = $bundle->getPath() . '/' . self::TEMPLATES_CONFIG_FILENAME;
 			if (file_exists($fileName)) {
-				$blocks = array_merge($blocks, $this->createBlockTypesFromYml($fileName));
+				$blocks = array_merge($blocks, $this->createBlockTypesFromYml($fileName, $bundle));
 			}
 		}
 
@@ -69,11 +70,12 @@ class BlockTypeRepository
 	/**
 	 * Creates blocks from YAML file
 	 *
-	 * @param  string $fileName
-	 * @return BlockType[]
+	 * @param string $fileName
+	 * @param Bundle $bundle
 	 * @throws \Exception
+	 * @return BlockType[]
 	 */
-	private function createBlockTypesFromYml($fileName)
+	private function createBlockTypesFromYml($fileName, Bundle $bundle)
 	{
 		$blocks = array();
 
@@ -86,6 +88,7 @@ class BlockTypeRepository
 			// adding blocks
 			foreach ($data as $row) {
 				$block = BlockType::createFromArray($row);
+				$block->setBundle($bundle);
 				$blocks[$block->getName()] = $block;
 			}
 		}
