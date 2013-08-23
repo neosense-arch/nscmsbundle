@@ -20,6 +20,14 @@ class MenuBlockSettingsForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
+		$builder
+			->add('rootPageId', 'ns_cms_form_element_page_select_type', array(
+				'label' => 'Родительская страница',
+			))
+			->add('depth', 'text', array(
+				'label' => 'Глубина',
+			))
+		;
     }
 
 	/**
