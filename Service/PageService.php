@@ -69,6 +69,17 @@ class PageService
 	}
 
 	/**
+	 * Retrieves page by id
+	 *
+	 * @param  int $id
+	 * @return Page
+	 */
+	public function getPageById($id)
+	{
+		return $this->pageRepository->findPageById($id);
+	}
+
+	/**
 	 * @param ObjectManager $entityManager
 	 */
 	public function setEntityManager($entityManager)
