@@ -181,7 +181,7 @@ class PageRepository extends NestedTreeRepository
 	 */
 	public function findMainPage()
 	{
-		return $this->findPageByName(Page::MAIN_PAGE_NAME);
+		return $this->findOneByName(Page::MAIN_PAGE_NAME);
 	}
 
 	/**
@@ -202,7 +202,7 @@ class PageRepository extends NestedTreeRepository
 	 *
 	 * @return Page|null
 	 */
-	private function findRootPage()
+	public function findRootPage()
 	{
 		return $this->findOneBy(array('parent' => null));
 	}
@@ -227,6 +227,7 @@ class PageRepository extends NestedTreeRepository
 	/**
 	 * Retrieves root page
 	 *
+	 * @deprecated use PageService::getRootPageOrCreate instead
 	 * @return Page
 	 */
 	public function findRootPageOrCreate()

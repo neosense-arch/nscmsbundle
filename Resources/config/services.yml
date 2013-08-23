@@ -5,6 +5,7 @@ parameters:
     ns_cms.repository.block.factory_argument: 'NSCmsBundle:Block'
     ns_cms.repository.page.class:             'NS\CmsBundle\Entity\PageRepository'
     ns_cms.repository.page.factory_argument:  'NSCmsBundle:Page'
+    ns_cms.service.page.class:                'NS\CmsBundle\Service\PageService'
     ns_cms.form.type.template_path.class:     'NS\CmsBundle\Form\Type\TemplatePathType'
     ns_cms.manager.template.class:            'NS\CmsBundle\Manager\TemplateManager'
     ns_cms.manager.block.class:               'NS\CmsBundle\Manager\BlockManager'
@@ -28,17 +29,23 @@ services:
 
     ns_cms.repository.block:
         class: %ns_cms.repository.block.class%
-        factory_service: doctrine.orm.default_entity_manager
+        factory_service: doctrine.orm.entity_manager
         factory_method: getRepository
         arguments:
             - %ns_cms.repository.block.factory_argument%
 
     ns_cms.repository.page:
         class: %ns_cms.repository.page.class%
-        factory_service: doctrine.orm.default_entity_manager
+        factory_service: doctrine.orm.entity_manager
         factory_method: getRepository
         arguments:
             - %ns_cms.repository.page.factory_argument%
+
+    ns_cms.service.page:
+        class: %ns_cms.service.page.class%
+        calls:
+            - [setEntityManager, [@doctrine.orm.entity_manager]]
+            - [setPageRepository, [@ns_cms.repository.page]]
 
     ns_cms.form.type.template_path:
         class: %ns_cms.form.type.template_path.class%

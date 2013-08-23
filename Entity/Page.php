@@ -17,7 +17,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Page
 {
-	const MAIN_PAGE_NAME = 'main';
+	const MAIN_PAGE_NAME  = 'main';
+	const MAIN_PAGE_TITLE = 'Главная';
+	const ROOT_PAGE_NAME  = 'ns_cms_pages_root_page';
+	const ROOT_PAGE_TITLE = 'ns_cms_pages_root_page';
 
 	/**
 	 * @var int
