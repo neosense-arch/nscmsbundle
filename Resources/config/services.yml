@@ -1,27 +1,42 @@
 parameters:
-    ns_cms.repository.template.class:         'NS\CmsBundle\Entity\TemplateRepository'
-    ns_cms.repository.blocktype.class:        'NS\CmsBundle\Entity\BlockTypeRepository'
-    ns_cms.repository.block.class:            'NS\CmsBundle\Entity\BlockRepository'
-    ns_cms.repository.block.factory_argument: 'NSCmsBundle:Block'
-    ns_cms.repository.page.class:             'NS\CmsBundle\Entity\PageRepository'
-    ns_cms.repository.page.factory_argument:  'NSCmsBundle:Page'
-    ns_cms.service.page.class:                'NS\CmsBundle\Service\PageService'
-    ns_cms.form.type.template_path.class:     'NS\CmsBundle\Form\Type\TemplatePathType'
-    ns_cms.manager.template.class:            'NS\CmsBundle\Manager\TemplateManager'
-    ns_cms.manager.block.class:               'NS\CmsBundle\Manager\BlockManager'
-    ns_cms.twig.extension.area.class:         'NS\CmsBundle\Twig\Extension\AreaExtension'
+    ns_cms.form.element.page_select_type.class: 'NS\CmsBundle\Form\Element\PageSelectType'
+    ns_cms.form.type.template_path.class:       'NS\CmsBundle\Form\Type\TemplatePathType'
+    ns_cms.repository.template.class:           'NS\CmsBundle\Entity\TemplateRepository'
+    ns_cms.repository.blocktype.class:          'NS\CmsBundle\Entity\BlockTypeRepository'
+    ns_cms.repository.block.class:              'NS\CmsBundle\Entity\BlockRepository'
+    ns_cms.repository.block.factory_argument:   'NSCmsBundle:Block'
+    ns_cms.repository.page.class:               'NS\CmsBundle\Entity\PageRepository'
+    ns_cms.repository.page.factory_argument:    'NSCmsBundle:Page'
+    ns_cms.service.page.class:                  'NS\CmsBundle\Service\PageService'
+    ns_cms.manager.template.class:              'NS\CmsBundle\Manager\TemplateManager'
+    ns_cms.manager.block.class:                 'NS\CmsBundle\Manager\BlockManager'
+    ns_cms.twig.extension.area.class:           'NS\CmsBundle\Twig\Extension\AreaExtension'
 
     # search agent classes
-    ns_cms.search.content.type:               'ns_cms:content'
-    ns_cms.search.content.model.class:        'NS\CmsBundle\Entity\Block'
-    ns_cms.search.content.mapper.class:       'NS\CmsBundle\Search\ContentMapper'
-    ns_cms.search.content.repository.class:   'NS\CmsBundle\Search\ContentRepository'
+    ns_cms.search.content.type:                 'ns_cms:content'
+    ns_cms.search.content.model.class:          'NS\CmsBundle\Entity\Block'
+    ns_cms.search.content.mapper.class:         'NS\CmsBundle\Search\ContentMapper'
+    ns_cms.search.content.repository.class:     'NS\CmsBundle\Search\ContentRepository'
 
 services:
+    ns_cms.form.element.page_select_type:
+        class: %ns_cms.form.element.page_select_type.class%
+        calls:
+            - [setPageService, [@ns_cms.service.page]]
+        tags:
+            -  { name: form.type, alias: ns_cms_form_element_page_select_type }
+            
+    ns_cms.form.type.template_path:
+        class: %ns_cms.form.type.template_path.class%
+        calls:
+            - [setTemplateRepository, [@ns_cms.repository.template]]
+        tags:
+            -  { name: form.type, alias: ns_cmsbundle_templatepathtype }
+
     ns_cms.repository.template:
         class: %ns_cms.repository.template.class%
         calls:
-            - [setContainer, ["@service_container"]]
+            - [setContainer, [@service_container]]
 
     ns_cms.repository.blocktype:
         class: %ns_cms.repository.blocktype.class%
@@ -46,13 +61,6 @@ services:
         calls:
             - [setEntityManager, [@doctrine.orm.entity_manager]]
             - [setPageRepository, [@ns_cms.repository.page]]
-
-    ns_cms.form.type.template_path:
-        class: %ns_cms.form.type.template_path.class%
-        calls:
-            - [setTemplateRepository, [@ns_cms.repository.template]]
-        tags:
-            -  { name: form.type, alias: ns_cmsbundle_templatepathtype }
 
     ns_cms.manager.template:
         class: %ns_cms.manager.template.class%
