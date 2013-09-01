@@ -3,6 +3,7 @@
 namespace NS\CmsBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
@@ -41,8 +42,7 @@ class PagesController extends Controller
 	{
 		$page = $this->getPageRepository()->findPageById($id);
 		if (!$page) {
-			// @todo 404
-			return $this->redirect($this->generateUrl('ns_cms_main'));
+			return $this->get404Response($id);
 		}
 
 		return $this->getPageResponse($page);
@@ -58,11 +58,23 @@ class PagesController extends Controller
 	{
 		$page = $this->getPageRepository()->findPageByName($name);
 		if (!$page) {
-			// @todo 404
-			return $this->redirect($this->generateUrl('ns_cms_main'));
+			return $this->get404Response($name);
 		}
 
 		return $this->getPageResponse($page);
+	}
+
+	/**
+	 * @param string|int $page
+	 * @return RedirectResponse
+	 * @throws \Exception
+	 */
+	private function get404Response($page)
+	{
+		if ($this->container->get( 'kernel' )->getEnvironment() === 'dev') {
+			throw new \Exception("Page '{$page}' wasn't found");
+		}
+		return $this->redirect($this->generateUrl('ns_cms_main'));
 	}
 
 	/**
