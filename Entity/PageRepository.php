@@ -185,19 +185,6 @@ class PageRepository extends NestedTreeRepository
 	}
 
 	/**
-	 * Retrieves page by name
-	 *
-	 * @param  string $name
-	 * @return Page|null
-	 *
-	 * @deprecated use findOneByName
-	 */
-	public function findPageByName($name)
-	{
-		return $this->findOneByName($name);
-	}
-
-	/**
 	 * Retrieves root page
 	 *
 	 * @return Page|null

@@ -56,7 +56,7 @@ class PagesController extends Controller
 	 */
 	public function pageNameAction($name)
 	{
-		$page = $this->getPageRepository()->findPageByName($name);
+		$page = $this->getPageRepository()->findOneByName($name);
 		if (!$page) {
 			return $this->get404Response($name);
 		}
