@@ -60,7 +60,7 @@ class AdminBlocksController extends Controller
 
 			// adding block
 			$block = new Block();
-			$block->setTitle('default');
+			$block->setTitle($blockType->getTitle());
 			$block->setType($blockType);
 			$block->setArea($area);
 			$block->setPosition($_GET['position']);
@@ -73,10 +73,6 @@ class AdminBlocksController extends Controller
 
 			// saving block
 			$this->getDoctrine()->getManager()->persist($block);
-			$this->getDoctrine()->getManager()->flush();
-
-			// new title based on block type
-			$block->setTitle($blockType->getTitle() . ' #' . $block->getId());
 			$this->getDoctrine()->getManager()->flush();
 
 			// retrieving new block id
