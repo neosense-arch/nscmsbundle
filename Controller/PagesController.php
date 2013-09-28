@@ -2,7 +2,10 @@
 
 namespace NS\CmsBundle\Controller;
 
+use NS\CmsBundle\Event\AfterPageRenderEvent;
+use NS\CmsBundle\Event\PageEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,11 +44,14 @@ class PagesController extends Controller
 	public function pageAction($id)
 	{
 		$page = $this->getPageRepository()->findPageById($id);
-		if (!$page) {
-			return $this->get404Response($id);
-		}
 
-		return $this->getPageResponse($page);
+		$response = $page
+			? $this->getPageResponse($page)
+			: $this->get404Response($id);
+
+		$this->throwAfterPageRenderEvent($page, $response);
+
+		return $response;
 	}
 
 	/**
@@ -56,12 +62,17 @@ class PagesController extends Controller
 	 */
 	public function pageNameAction($name)
 	{
-		$page = $this->getPageRepository()->findOneByName($name);
-		if (!$page) {
-			return $this->get404Response($name);
-		}
+		$page = $this
+			->getPageRepository()
+			->findOneByName($name);
 
-		return $this->getPageResponse($page);
+		$response = $page
+			? $this->getPageResponse($page)
+			: $this->get404Response($name);
+
+		$this->throwAfterPageRenderEvent($page, $response);
+
+		return $response;
 	}
 
 	/**
@@ -144,5 +155,23 @@ class PagesController extends Controller
 	private function getBlockManager()
 	{
 		return $this->container->get('ns_cms.manager.block');
+	}
+
+	/**
+	 * @return EventDispatcherInterface
+	 */
+	private function getEventDispatcher()
+	{
+		return $this->container->get('event_dispatcher');
+	}
+
+	/**
+	 * @param Page     $page
+	 * @param Response $response
+	 */
+	private function throwAfterPageRenderEvent(Page $page, Response $response)
+	{
+		$afterPageRenderEvent = new AfterPageRenderEvent($page, $this->getRequest(), $response);
+		$this->getEventDispatcher()->dispatch(PageEvents::AFTER_RENDER, $afterPageRenderEvent);
 	}
 }

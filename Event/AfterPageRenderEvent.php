@@ -4,6 +4,8 @@ namespace NS\CmsBundle\Event;
 
 use NS\CmsBundle\Entity\Page;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class AfterPageRenderEvent
@@ -18,25 +20,25 @@ class AfterPageRenderEvent extends Event
 	private $page;
 
 	/**
-	 * @var string
+	 * @var Request
 	 */
-	private $html;
+	private $request;
 
 	/**
-	 * @param Page   $page
-	 * @param string $html
+	 * @var Response
 	 */
-	public function __construct(Page $page, $html)
-	{
-		$this->page = $page;
-	}
+	private $response;
 
 	/**
-	 * @return string
+	 * @param Page     $page
+	 * @param Request  $request
+	 * @param Response $response
 	 */
-	public function getHtml()
+	public function __construct(Page $page, Request $request, Response $response)
 	{
-		return $this->html;
+		$this->page     = $page;
+		$this->request  = $request;
+		$this->response = $response;
 	}
 
 	/**
@@ -45,5 +47,21 @@ class AfterPageRenderEvent extends Event
 	public function getPage()
 	{
 		return $this->page;
+	}
+
+	/**
+	 * @return Request
+	 */
+	public function getRequest()
+	{
+		return $this->request;
+	}
+
+	/**
+	 * @return Response
+	 */
+	public function getResponse()
+	{
+		return $this->response;
 	}
 }
