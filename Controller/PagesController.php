@@ -109,6 +109,9 @@ class PagesController extends Controller
 			// rendering
 			$response = $kernel->handle($request);
 			$block->setHtml($response->getContent());
+			if ($response->getStatusCode() === 404) {
+				return $this->get404Response($page->getName());
+			}
 
 			// merging headers
 			$headers = array_merge($headers, $response->headers->all());
