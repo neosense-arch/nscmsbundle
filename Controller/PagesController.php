@@ -32,11 +32,7 @@ class PagesController extends Controller
 			throw new \Exception("Main page wasn't found");
 		}
 
-		$response = $this->getPageResponse($page);
-
-		$this->throwAfterPageRenderEvent($page, $response);
-
-		return $response;
+		return $this->getPageResponse($page);
 	}
 
 	/**
@@ -49,13 +45,9 @@ class PagesController extends Controller
 	{
 		$page = $this->getPageRepository()->findPageById($id);
 
-		$response = $page
+		return $page
 			? $this->getPageResponse($page)
 			: $this->get404Response($id);
-
-		$this->throwAfterPageRenderEvent($page, $response);
-
-		return $response;
 	}
 
 	/**
@@ -70,33 +62,36 @@ class PagesController extends Controller
 			->getPageRepository()
 			->findOneByName($name);
 
-		$response = $page
+		return $page
 			? $this->getPageResponse($page)
 			: $this->get404Response($name);
-
-		$this->throwAfterPageRenderEvent($page, $response);
-
-		return $response;
 	}
 
 	/**
-	 * @param string|int $page
+	 * @param string|int $pageName
 	 * @return RedirectResponse
 	 * @throws \Exception
 	 */
-	private function get404Response($page)
+	private function get404Response($pageName)
 	{
-		if ($this->container->get( 'kernel' )->getEnvironment() === 'dev') {
-			throw new \Exception("Page '{$page}' wasn't found");
+		$page404 = $this->getPageRepository()->findOneByName('error404');
+		if ($page404) {
+			return $this->getPageResponse($page404, 404);
 		}
+
+		if ($this->container->get('kernel')->getEnvironment() === 'dev') {
+			throw new \Exception("Page '{$pageName}' wasn't found. Error page 'error404' wasn't found too.");
+		}
+
 		return $this->redirect($this->generateUrl('ns_cms_main'));
 	}
 
 	/**
-	 * @param  Page $page
+	 * @param Page $page
+	 * @param int  $statusCode
 	 * @return Response
 	 */
-	private function getPageResponse(Page $page)
+	private function getPageResponse(Page $page, $statusCode = null)
 	{
 		/** @var $kernel Kernel */
 		$kernel = $this->container->get('kernel');
@@ -137,6 +132,15 @@ class PagesController extends Controller
 		foreach ($cookies as $cookie) {
 			$response->headers->setCookie($cookie);
 		}
+
+		// response code
+		if ($statusCode) {
+			$response->setStatusCode($statusCode);
+		}
+
+		// after page render event
+		$afterPageRenderEvent = new AfterPageRenderEvent($page, $this->getRequest(), $response);
+		$this->getEventDispatcher()->dispatch(PageEvents::AFTER_RENDER, $afterPageRenderEvent);
 
 		return $response;
 	}
