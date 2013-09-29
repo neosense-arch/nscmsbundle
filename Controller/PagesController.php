@@ -32,7 +32,11 @@ class PagesController extends Controller
 			throw new \Exception("Main page wasn't found");
 		}
 
-		return $this->getPageResponse($page);
+		$response = $this->getPageResponse($page);
+
+		$this->throwAfterPageRenderEvent($page, $response);
+
+		return $response;
 	}
 
 	/**

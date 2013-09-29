@@ -9,5 +9,5 @@ namespace NS\CmsBundle\Event;
  */
 final class PageEvents
 {
-	const AFTER_RENDER = 'ns_cms.page.after_render';
+	const AFTER_RENDER = 'ns_cms.after_page_render';
 }
