@@ -2,7 +2,11 @@
 
 namespace NS\CmsBundle\Controller;
 
+use NS\CmsBundle\Entity\Block;
+use NS\CmsBundle\Event\AfterBlockProcessEvent;
 use NS\CmsBundle\Event\AfterPageRenderEvent;
+use NS\CmsBundle\Event\BeforeBlockProcessEvent;
+use NS\CmsBundle\Event\BlockEvents;
 use NS\CmsBundle\Event\PageEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -101,17 +105,31 @@ class PagesController extends Controller
 		$cookies = array();
 		foreach ($this->getBlockManager()->getPageBlocks($page) as $block) {
 			// new request
-			$request = clone $this->getRequest();
-			$request->attributes->set('block', $block);
-			$request->attributes->set('page', $page);
-			$request->attributes->set('_controller', $block->getTypeName());
+			$request = $this->createBlockRequest($block, $page);
 
-			// rendering
-			$response = $kernel->handle($request);
-			$block->setHtml($response->getContent());
+			// before block process event
+			$beforeBlockProcessEvent = new BeforeBlockProcessEvent($request);
+			$this->getEventDispatcher()->dispatch(BlockEvents::BEFORE_PROCESS, $beforeBlockProcessEvent);
+
+			// retrieving response
+			if ($beforeBlockProcessEvent->hasResponse()) {
+				$response = $beforeBlockProcessEvent->getResponse();
+			}
+			else {
+				$response = $kernel->handle($request);
+			}
+
+			// after block process event
+			$afterBlockProcessEvent = new AfterBlockProcessEvent($response, $beforeBlockProcessEvent->hasResponse());
+			$this->getEventDispatcher()->dispatch(BlockEvents::AFTER_PROCESS, $afterBlockProcessEvent);
+
+			// block can throw 404
 			if ($response->getStatusCode() === 404) {
 				return $this->get404Response($page->getName());
 			}
+
+			// setting block content
+			$block->setHtml($response->getContent());
 
 			// merging headers
 			$headers = array_merge($headers, $response->headers->all());
@@ -146,6 +164,21 @@ class PagesController extends Controller
 		$this->getEventDispatcher()->dispatch(PageEvents::AFTER_RENDER, $afterPageRenderEvent);
 
 		return $response;
+	}
+
+	/**
+	 * @param Block $block
+	 * @param Page  $page
+	 * @return Request
+	 */
+	private function createBlockRequest(Block $block, Page $page)
+	{
+		$request = clone $this->getRequest();
+		$request->attributes->set('block', $block);
+		$request->attributes->set('page', $page);
+		$request->attributes->set('_controller', $block->getTypeName());
+
+		return $request;
 	}
 
 	/**
