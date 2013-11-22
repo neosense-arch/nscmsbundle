@@ -108,7 +108,7 @@ class PagesController extends Controller
 			$request = $this->createBlockRequest($block, $page);
 
 			// before block process event
-			$beforeBlockProcessEvent = new BeforeBlockProcessEvent($request);
+			$beforeBlockProcessEvent = new BeforeBlockProcessEvent($request, $block, $page);
 			$this->getEventDispatcher()->dispatch(BlockEvents::BEFORE_PROCESS, $beforeBlockProcessEvent);
 
 			// retrieving response
@@ -120,7 +120,7 @@ class PagesController extends Controller
 			}
 
 			// after block process event
-			$afterBlockProcessEvent = new AfterBlockProcessEvent($response, $beforeBlockProcessEvent->hasResponse());
+			$afterBlockProcessEvent = new AfterBlockProcessEvent($block, $page, $response, $beforeBlockProcessEvent->hasResponse());
 			$this->getEventDispatcher()->dispatch(BlockEvents::AFTER_PROCESS, $afterBlockProcessEvent);
 
 			// block can throw 404

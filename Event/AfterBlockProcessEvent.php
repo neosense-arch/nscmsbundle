@@ -2,8 +2,9 @@
 
 namespace NS\CmsBundle\Event;
 
+use NS\CmsBundle\Entity\Block;
+use NS\CmsBundle\Entity\Page;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -13,6 +14,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AfterBlockProcessEvent extends Event
 {
+	/**
+	 * @var Block
+	 */
+	private $block;
+
+	/**
+	 * @var Page
+	 */
+	private $page;
+
 	/**
 	 * @var Response
 	 */
@@ -24,18 +35,39 @@ class AfterBlockProcessEvent extends Event
 	private $fromCache;
 
 	/**
+	 * @param Block    $block
+	 * @param Page     $page
 	 * @param Response $response
 	 * @param bool     $fromCache
 	 */
-	public function __construct(Response $response, $fromCache = false)
+	public function __construct(Block $block, Page $page, Response $response, $fromCache = false)
 	{
-		$this->response = $response;
+		$this->block     = $block;
+		$this->page      = $page;
+		$this->response  = $response;
 		$this->fromCache = $fromCache;
 	}
+
+	/**
+	 * @return Block
+	 */
+	public function getBlock()
+	{
+		return $this->block;
+	}
+
+	/**
+	 * @return Page
+	 */
+	public function getPage()
+	{
+		return $this->page;
+	}
+
 	/**
 	 * @return boolean
 	 */
-	public function getFromCache()
+	public function isFromCache()
 	{
 		return $this->fromCache;
 	}
