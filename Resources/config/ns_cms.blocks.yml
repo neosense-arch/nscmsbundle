@@ -14,3 +14,5 @@ blocks:
         template: NSCmsBundle:Blocks:menuBlock.phtml.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsModel
+        cache:
+            entities: [NS\CmsBundle\Entity\Page]

@@ -46,6 +46,11 @@ class BlockType
 	private $bundle;
 
 	/**
+	 * @var array
+	 */
+	private $raw;
+
+	/**
 	 * Creates block from array
 	 *
 	 * @param  array $data
@@ -74,6 +79,8 @@ class BlockType
 		if (!empty($data['settingsModelClass'])) {
 			$block->setSettingsModelClass($data['settingsModelClass']);
 		}
+
+		$block->raw = $data;
 
 		return $block;
 	}
@@ -190,6 +197,22 @@ class BlockType
 	public function getBundle()
 	{
 		return $this->bundle;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getRaw()
+	{
+		return $this->raw;
+	}
+
+	/**
+	 * @param array $raw
+	 */
+	public function setRaw(array $raw)
+	{
+		$this->raw = $raw;
 	}
 
 	/**

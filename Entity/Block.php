@@ -112,6 +112,14 @@ class Block implements ModelInterface
 	}
 
 	/**
+	 * @param int $id
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+	}
+
+	/**
 	 * @param Page $page
 	 */
 	public function setPage(Page $page)
@@ -187,7 +195,7 @@ class Block implements ModelInterface
 	/**
 	 * @param string $typeName
 	 */
-	private function setTypeName($typeName)
+	public function setTypeName($typeName)
 	{
 		$this->typeName = $typeName;
 	}
