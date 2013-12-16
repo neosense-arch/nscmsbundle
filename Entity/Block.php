@@ -33,6 +33,12 @@ class Block implements ModelInterface
 
 	/**
 	 * @var string
+	 * @ORM\Column(type="string", nullable=true)
+	 */
+	private $template;
+
+	/**
+	 * @var string
 	 * @ORM\Column(type="text", nullable=true)
 	 */
 	private $settings;
@@ -280,5 +286,22 @@ class Block implements ModelInterface
 	public function getHtml()
 	{
 		return $this->html;
+	}
+
+	/**
+	 * @param string $template
+	 */
+	public function setTemplate($template)
+	{
+		$this->template = $template;
+	}
+
+	/**
+	 * @param string $default
+	 * @return string
+	 */
+	public function getTemplate($default = null)
+	{
+		return $this->template ?: $default;
 	}
 }

@@ -25,6 +25,10 @@ class BlockType extends AbstractType
 				'required' => true,
 				'label'    => 'Заголовок',
 			))
+			->add('template', 'text', array(
+				'required' => false,
+				'label'    => 'Шаблон',
+			))
         ;
     }
 
