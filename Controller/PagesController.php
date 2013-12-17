@@ -8,6 +8,7 @@ use NS\CmsBundle\Event\AfterPageRenderEvent;
 use NS\CmsBundle\Event\BeforeBlockProcessEvent;
 use NS\CmsBundle\Event\BlockEvents;
 use NS\CmsBundle\Event\PageEvents;
+use NS\CmsBundle\Service\TemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -139,7 +140,10 @@ class PagesController extends Controller
 		}
 
 		// rendering
-		$response = $this->render('NSCmsBundle:Pages:page.html.twig', array(
+		/** @var TemplateService $templateService */
+		$templateService = $this->get('ns_cms.service.template');
+		$template = $templateService->getPageTemplate($page);
+		$response = $this->render($template->getPath(), array(
 			'page'   => $page,
 			'blocks' => $this->getBlockManager()->getPageBlocks($page),
 		));
