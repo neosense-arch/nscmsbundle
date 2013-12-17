@@ -2,6 +2,7 @@
 
 namespace NS\CmsBundle\Controller;
 
+use NS\CmsBundle\Service\TemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -169,19 +170,18 @@ class AdminPagesController extends Controller
 	 */
 	public function blocksAction()
 	{
-		// checking page id
 		if (empty($_GET['pageId'])) {
 			return $this->back();
 		}
 
-		// retrieving page
 		$page = $this->getPageRepository()->findPageById($_GET['pageId']);
 		if (!$page) {
 			return $this->back();
 		}
 
-		// retrieving page template
-		$template = $this->getPageTemplate($page);
+		/** @var TemplateService $templateService */
+		$templateService = $this->get('ns_cms.service.template');
+		$template = $templateService->getPageTemplate($page);
 
 		// available block types
 		$blockTypes = $this->getBlockTypeRepository()->findAll();
@@ -265,28 +265,6 @@ class AdminPagesController extends Controller
 	}
 
 	/**
-	 * Retrieves page template
-	 *
-	 * @param  Page $page
-	 * @return Template
-	 * @throws \Exception
-	 */
-	private function getPageTemplate(Page $page)
-	{
-		$path = $page->getTemplatePath();
-		if (!$path) {
-			return $this->getTemplateRepository()->findDefaultTemplate();
-		}
-
-		$template = $this->getTemplateRepository()->findTemplateByPath($path);
-		if (!$template) {
-			throw new \Exception("Template '{$path}' wasn't found");
-		}
-
-		return $template;
-	}
-
-	/**
 	 * Retrieves pages repository
 	 *
 	 * @return PageRepository
@@ -296,14 +274,6 @@ class AdminPagesController extends Controller
 		return $this
 			->getDoctrine()
 			->getRepository('NSCmsBundle:Page');
-	}
-
-	/**
-	 * @return TemplateRepository
-	 */
-	private function getTemplateRepository()
-	{
-		return $this->container->get('ns_cms.repository.template');
 	}
 
 	/**
