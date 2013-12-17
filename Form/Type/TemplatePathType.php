@@ -65,6 +65,9 @@ class TemplatePathType extends AbstractType
 
 		foreach ($this->getTemplateRepository()->findAll() as $template) {
 			$choices[$template->getPath()] = $template->getTitle();
+			if ($template->isDefault()) {
+				$choices[$template->getPath()] .= ' (по умолчанию)';
+			}
 		}
 
 		return $choices;
