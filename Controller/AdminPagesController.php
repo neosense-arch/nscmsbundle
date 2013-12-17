@@ -96,7 +96,7 @@ class AdminPagesController extends Controller
 
 		// validating form
 		if ($this->getRequest()->getMethod() === 'POST') {
-			$form->bind($this->getRequest());
+			$form->submit($this->getRequest());
 			if ($form->isValid()) {
 				$this->getPageRepository()->savePage($page);
 				return $this->back();
@@ -149,7 +149,7 @@ class AdminPagesController extends Controller
 
 		// validating form
 		if ($this->getRequest()->getMethod() === 'POST') {
-			$form->bind($this->getRequest());
+			$form->submit($this->getRequest());
 			if ($form->isValid()) {
 				$this->getPageRepository()->savePage($page);
 			}
@@ -296,18 +296,6 @@ class AdminPagesController extends Controller
 		return $this
 			->getDoctrine()
 			->getRepository('NSCmsBundle:Page');
-	}
-
-	/**
-	 * Retrieves blocks repository
-	 *
-	 * @return BlockRepository
-	 */
-	private function getBlockRepository()
-	{
-		return $this
-			->getDoctrine()
-			->getRepository('NSCmsBundle:Block');
 	}
 
 	/**
