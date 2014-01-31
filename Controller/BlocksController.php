@@ -4,6 +4,7 @@ namespace NS\CmsBundle\Controller;
 
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
+use NS\CmsBundle\Block\Settings\MapBlockSettingsModel;
 use NS\CmsBundle\Block\Settings\MenuBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
 use NS\CmsBundle\Menu\Matcher\Voter\PageVoter;
@@ -17,7 +18,7 @@ use NS\CmsBundle\Manager\BlockManager;
 use NS\CmsBundle\Block\Settings\ContentBlockSettingsModel;
 
 /**
- * Pages controller
+ * Blocks controller
  *
  */
 class BlocksController extends Controller
@@ -74,6 +75,26 @@ class BlocksController extends Controller
 			'matcher'  => $matcher,
 		));
 	}
+
+    /**
+     * Map block
+     *
+     * @param  Block $block
+     * @throws \Exception
+     * @return Response
+     */
+    public function mapBlockAction(Block $block)
+    {
+        /** @var MapBlockSettingsModel $settings */
+        $settings = $this->getBlockManager()->getBlockSettings($block);
+
+        // rendering
+        return $this->render('NSCmsBundle:Blocks:mapBlock.html.twig', array(
+            'block'    => $block,
+            'settings' => $settings,
+            'uid'      => md5(uniqid('', true)),
+        ));
+    }
 
 	/**
 	 * @return BlockManager

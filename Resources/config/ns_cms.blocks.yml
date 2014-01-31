@@ -16,3 +16,10 @@ blocks:
         settingsModelClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsModel
         cache:
             entities: [NS\CmsBundle\Entity\Page]
+
+    -
+        name: NSCmsBundle:Blocks:mapBlock
+        title: Блок карты
+        template: NSCmsBundle:Blocks:mapBlock.phtml.twig
+        settingsFormClass: NS\CmsBundle\Block\Settings\MapBlockSettingsForm
+        settingsModelClass: NS\CmsBundle\Block\Settings\MapBlockSettingsModel

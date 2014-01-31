@@ -1,0 +1,49 @@
+{# Map center #}
+{% set lat = settings.lat|number_format(6, '.', '') %}
+{% set lng = settings.lng|number_format(6, '.', '') %}
+{% set zoom = settings.zoom|default(16) %}
+
+{# Map dimensions #}
+{% set width = settings.width|default(600) %}
+{% set height = settings.height|default(600) %}
+
+{# Marker settings #}
+{% set markerLat = settings.markerLat|default(settings.lat)|number_format(6, '.', '') %}
+{% set markerLng = settings.markerLng|default(settings.lng)|number_format(6, '.', '') %}
+{% set markerTitle = settings.markerTitle|default('') %}
+
+{# Info window settings #}
+{% set infoWidth = width/2|round() %}
+{% set infoHeight = height/4|round() %}
+
+
+<div class="ns-map" id="ns-map-{{ uid }}" style="width:{{ width }}px;height:{{ height }}px"></div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ settings.apiKey }}&sensor=false"></script>
+<script type="text/javascript">
+    (function(){
+        function initialize() {
+            var mapOptions = {
+                center: new google.maps.LatLng({{ lat }}, {{ lng }}),
+                zoom: {{ zoom }},
+                scrollwheel: false
+            };
+            var map = new google.maps.Map(document.getElementById("ns-map-{{ uid }}"), mapOptions);
+
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({{ markerLat }}, {{ markerLng }}),
+                map: map,
+                title:"{{ markerTitle }}"
+            });
+
+            {% if markerTitle %}
+                var infowindow = new google.maps.InfoWindow({
+                    content: "<p style=\"width:{{ infoWidth }}px\">{{ markerTitle }}</p>"
+                });
+                infowindow.open(map,marker);
+            {% endif %}
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    })();
+</script>
+
