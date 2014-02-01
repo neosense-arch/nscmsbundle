@@ -72,12 +72,25 @@ class PageService
 	 * Retrieves page by id
 	 *
 	 * @param  int $id
-	 * @return Page
+	 * @return Page|null
 	 */
 	public function getPageById($id)
 	{
 		return $this->pageRepository->findPageById($id);
 	}
+
+    /**
+     * Retrieves page by name
+     *
+     * @param string $name
+     * @return Page|null
+     */
+    public function getPageByName($name)
+    {
+        return $this->pageRepository->findOneBy(array(
+            'name' => $name,
+        ));
+    }
 
 	/**
 	 * @param ObjectManager $entityManager

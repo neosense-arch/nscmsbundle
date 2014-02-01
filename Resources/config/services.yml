@@ -58,6 +58,9 @@ services:
             - [setEntityManager, [@doctrine.orm.entity_manager]]
             - [setPageRepository, [@ns_cms.repository.page]]
 
+    ns_cms.page_service:
+        alias: ns_cms.service.page
+
     ns_cms.repository.template:
         class: %ns_cms.repository.template.class%
         calls:
