@@ -178,9 +178,14 @@ class PagesController extends Controller
 	private function createBlockRequest(Block $block, Page $page)
 	{
 		$request = clone $this->getRequest();
+
 		$request->attributes->set('block', $block);
 		$request->attributes->set('page', $page);
 		$request->attributes->set('_controller', $block->getTypeName());
+
+        // block settings
+        $settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
+        $request->attributes->set('settings', $settings);
 
 		return $request;
 	}
@@ -202,7 +207,7 @@ class PagesController extends Controller
 	 */
 	private function getBlockManager()
 	{
-		return $this->container->get('ns_cms.manager.block');
+		return $this->get('ns_cms.manager.block');
 	}
 
 	/**
@@ -210,16 +215,6 @@ class PagesController extends Controller
 	 */
 	private function getEventDispatcher()
 	{
-		return $this->container->get('event_dispatcher');
-	}
-
-	/**
-	 * @param Page     $page
-	 * @param Response $response
-	 */
-	private function throwAfterPageRenderEvent(Page $page, Response $response)
-	{
-		$afterPageRenderEvent = new AfterPageRenderEvent($page, $this->getRequest(), $response);
-		$this->getEventDispatcher()->dispatch(PageEvents::AFTER_RENDER, $afterPageRenderEvent);
+		return $this->get('event_dispatcher');
 	}
 }
