@@ -44,6 +44,8 @@ services:
         factory_method: getRepository
         arguments:
             - %ns_cms.repository.block.factory_argument%
+        calls:
+            - [setTemplateService, [@ns_cms.service.template]]
 
     ns_cms.repository.page:
         class: %ns_cms.repository.page.class%

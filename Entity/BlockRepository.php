@@ -3,6 +3,7 @@
 namespace NS\CmsBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use NS\CmsBundle\Service\TemplateService;
 
 /**
  * Blocks repository
@@ -10,6 +11,19 @@ use Doctrine\ORM\EntityRepository;
  */
 class BlockRepository extends EntityRepository
 {
+    /**
+     * @var TemplateService
+     */
+    private $templateService;
+
+    /**
+     * @param TemplateService $templateService
+     */
+    public function setTemplateService(TemplateService $templateService)
+    {
+        $this->templateService = $templateService;
+    }
+
 	/**
 	 * Retrieves page blocks
 	 *
@@ -18,14 +32,26 @@ class BlockRepository extends EntityRepository
 	 */
 	public function findPageBlocks(Page $page)
 	{
-		$query = $this->_em->createQuery("
-			SELECT b
-			FROM NSCmsBundle:Block b
-			WHERE b.page = :page OR b.page IS NULL
-			ORDER BY b.areaName, b.position
-		");
+        // retrieving page areas
+        $template = $this->templateService->getPageTemplate($page);
+        $areas = array();
+        foreach ($template->getAreas() as $area) {
+            $areas[] = $area->getName();
+        }
 
-		return $query->execute(array('page' => $page));
+        $queryBuilder = $this->createQueryBuilder('b')
+            ->andWhere('b.page = :page')
+            ->setParameter('page', $page)
+
+            ->orWhere('b.page IS NULL')
+
+            ->andWhere('b.areaName IN (:areas)')
+            ->setParameter('areas', $areas)
+
+            ->orderBy('b.areaName')
+            ->addOrderBy('b.position');
+
+        return $queryBuilder->getQuery()->getResult();
 	}
 
 	/**
