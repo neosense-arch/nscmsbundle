@@ -75,6 +75,24 @@ class AdminBlocksController extends Controller
 			$this->getDoctrine()->getManager()->persist($block);
 			$this->getDoctrine()->getManager()->flush();
 
+            // overriding block template
+            $defaultTemplateFileName = $blockType->getTemplateFilePath();
+
+            $targetTemplate = str_replace(array(
+                ':', $blockType->getBundle()->getName()
+            ), array(
+                '/', $blockType->getBundle()->getName() . '/views'
+            ), $blockType->getTemplate());
+
+            $targetTemplateFileName = $this->get('kernel')->getRootDir() . '/Resources/' . $targetTemplate;
+
+            // creating directory
+            $dir = dirname($targetTemplateFileName);
+            if (file_exists($defaultTemplateFileName) && !file_exists($targetTemplateFileName)) {
+                @mkdir($dir, 0777, true);
+                @copy($defaultTemplateFileName, $targetTemplateFileName);
+            }
+
 			// retrieving new block id
 			return new JsonResponse(array(
 				'id'    => $block->getId(),

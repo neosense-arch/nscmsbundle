@@ -146,12 +146,44 @@ class BlockType
 	}
 
 	/**
+     * Retrieves block template
+     * Example: "NSCmsBundle:Blocks:menuBlock.html.twig"
+     *
 	 * @return string
 	 */
 	public function getTemplate()
 	{
+        if (!$this->template) {
+            return $this->getName() . '.html.twig';
+        }
 		return $this->template;
 	}
+
+    /**
+     * Retrieves template file name
+     * Example: "menuBlock.html.twig"
+     *
+     * @return string
+     */
+    public function getTemplateFileName()
+    {
+        return array_pop(explode(':', $this->getTemplate()));
+    }
+
+    /**
+     * Retrieves template file full path
+     * Example: "/project/vendor/neosense/cms-bundle/NS/CmsBundle/Resources/views/Blocks/menuBlock.html.twig"
+     *
+     * @return string
+     */
+    public function getTemplateFilePath()
+    {
+        return sprintf(
+            '%s/Resources/views/Blocks/%s',
+            $this->getBundle()->getPath(),
+            $this->getTemplateFileName()
+        );
+    }
 
 	/**
 	 * @param string $settingFormClass
