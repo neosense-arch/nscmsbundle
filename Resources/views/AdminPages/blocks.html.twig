@@ -226,7 +226,7 @@
 						{% for blockType in blockTypes %}
 							{% if bundle != blockType.bundle %}
 								{% set bundle = blockType.bundle %}
-								<h4>{{ bundle.name }}</h4>
+								<h4>{{ bundle.title is defined ? bundle.title : bundle.name }}</h4>
 							{% endif %}
 							{{ _self.block_item(null, blockType.name, blockType.title) }}
 						{% endfor %}
