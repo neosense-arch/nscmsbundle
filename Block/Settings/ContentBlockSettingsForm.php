@@ -22,7 +22,7 @@ class ContentBlockSettingsForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
 		$builder
-			->add('content', new TinyMceType(), array(
+			->add('content', 'ckeditor', array(
 				'label'    => 'Контент',
 				'required' => false,
 			))
