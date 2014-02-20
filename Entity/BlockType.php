@@ -167,7 +167,8 @@ class BlockType
      */
     public function getTemplateFileName()
     {
-        return array_pop(explode(':', $this->getTemplate()));
+        $aTemplate = explode(':', $this->getTemplate());
+        return array_pop($aTemplate);
     }
 
     /**
