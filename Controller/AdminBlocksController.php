@@ -3,6 +3,7 @@
 namespace NS\CmsBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -127,7 +128,9 @@ class AdminBlocksController extends Controller
 			}
 
 			// checking block
-			$block = $this->getBlockManager()->getBlock($_GET['blockId']);
+            /** @var BlockManager $blockManager */
+            $blockManager = $this->get('ns_cms.manager.block');
+			$block = $blockManager->getBlock($_GET['blockId']);
 
 			// checking page
 			$page = $this->getPageRepository()->findPageById($_GET['pageId']);
@@ -178,7 +181,9 @@ class AdminBlocksController extends Controller
 			}
 
 			// checking block
-			$block = $this->getBlockManager()->getBlock($_GET['blockId']);
+            /** @var BlockManager $blockManager */
+            $blockManager = $this->get('ns_cms.manager.block');
+			$block = $blockManager->getBlock($_GET['blockId']);
 
 			// saving block
 			$this->getDoctrine()->getManager()->remove($block);
@@ -192,20 +197,24 @@ class AdminBlocksController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function settingsAction()
+    /**
+     * @param Request $request
+     * @throws \Exception
+     * @return Response
+     */
+	public function settingsAction(Request $request)
 	{
-		// checking block id
-		if (empty($_GET['blockId'])) {
+        // checking block id
+        $blockId = $request->query->get('blockId');
+		if (!$blockId) {
 			throw new \Exception("Required param 'blockId' wasn't found");
 		}
 
 		// retrieving block
-		$block = $this->getBlockManager()->getBlock($_GET['blockId']);
-		$blockType = $this->getBlockManager()->getBlockType($block->getTypeName());
+        /** @var BlockManager $blockManager */
+        $blockManager = $this->get('ns_cms.manager.block');
+		$block = $blockManager->getBlock($blockId);
+		$blockType = $blockManager->getBlockType($block->getTypeName());
 
 		// form type
 		if (!$blockType->getSettingFormClass()) {
@@ -227,14 +236,12 @@ class AdminBlocksController extends Controller
 		$form = $this->createForm($formType, $settingsModel);
 
 		// validating form
-		if ($this->getRequest()->getMethod() === 'POST') {
-			$form->bind($this->getRequest());
-			if ($form->isValid()) {
-				$block->setSettings(serialize($settingsModel));
-				$this->getDoctrine()->getManager()->flush();
-				return $this->redirect($this->getRedirectUri());
-			}
-		}
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $block->setSettings(serialize($settingsModel));
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirect($this->getRedirectUri());
+        }
 
 		return $this->render('NSCmsBundle:AdminBlocks:settings.html.twig', array(
 			'form'     => $form->createView(),
@@ -243,31 +250,33 @@ class AdminBlocksController extends Controller
 		));
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function generalAction()
+    /**
+     * @param Request $request
+     * @throws \Exception
+     * @return Response
+     */
+	public function generalAction(Request $request)
 	{
-		// checking block id
-		if (empty($_GET['blockId'])) {
-			throw new \Exception("Required param 'blockId' wasn't found");
-		}
+        // checking block id
+        $blockId = $request->query->get('blockId');
+        if (!$blockId) {
+            throw new \Exception("Required param 'blockId' wasn't found");
+        }
 
 		// retrieving block
-		$block = $this->getBlockManager()->getBlock($_GET['blockId']);
+        /** @var BlockManager $blockManager */
+        $blockManager = $this->get('ns_cms.manager.block');
+        $block = $blockManager->getBlock($blockId);
 
 		// initializing form
 		$form = $this->createForm(new BlockType(), $block);
 
 		// validating form
-		if ($this->getRequest()->getMethod() === 'POST') {
-			$form->bind($this->getRequest());
-			if ($form->isValid()) {
-				$this->getDoctrine()->getManager()->flush();
-				return $this->redirect($this->getRedirectUri());
-			}
-		}
+		$form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirect($this->getRedirectUri());
+        }
 
 		return $this->render('NSCmsBundle:AdminBlocks:general.html.twig', array(
 			'form'     => $form->createView(),
@@ -300,14 +309,6 @@ class AdminBlocksController extends Controller
 	private function getTemplateManager()
 	{
 		return $this->container->get('ns_cms.manager.template');
-	}
-
-	/**
-	 * @return BlockManager
-	 */
-	private function getBlockManager()
-	{
-		return $this->container->get('ns_cms.manager.block');
 	}
 
 	/**
