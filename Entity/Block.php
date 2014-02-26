@@ -87,6 +87,12 @@ class Block implements ModelInterface
 	 */
 	private $shared;
 
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    private $useCache = false;
+
 	/**
 	 * Rendered HTML CAN BE NULL
 	 * @var string
@@ -304,4 +310,21 @@ class Block implements ModelInterface
 	{
 		return $this->template ?: $default;
 	}
+
+    /**
+     * @param boolean $useCache
+     */
+    public function setUseCache($useCache)
+    {
+        $this->useCache = $useCache;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUseCache()
+    {
+        return $this->useCache;
+    }
+
 }

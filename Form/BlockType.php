@@ -29,6 +29,10 @@ class BlockType extends AbstractType
 				'required' => false,
 				'label'    => 'Шаблон',
 			))
+			->add('useCache', 'checkbox', array(
+				'required' => false,
+				'label'    => 'Кэшировать блок',
+			))
         ;
     }
 
