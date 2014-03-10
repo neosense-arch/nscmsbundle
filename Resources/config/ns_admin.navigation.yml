@@ -2,6 +2,7 @@
     label:  "Страницы"
     action: "content:index"
     position: "first"
+    icon: "icon-file"
     pages:
         -
             label:  Общие
