@@ -1,6 +1,7 @@
 -
-    label:  "Контент"
+    label:  "Страницы"
     action: "content:index"
+    position: "first"
     pages:
         -
             label:  Общие
