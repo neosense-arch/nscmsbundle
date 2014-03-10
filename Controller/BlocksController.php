@@ -11,6 +11,7 @@ use NS\CmsBundle\Menu\Matcher\Voter\PageVoter;
 use NS\CmsBundle\Menu\PageNode;
 use NS\CmsBundle\Service\PageService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use NS\CmsBundle\Entity\Block;
@@ -32,43 +33,43 @@ class BlocksController extends Controller
 	public function contentBlockAction(Block $block)
 	{
 		/** @var $settings ContentBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
 
-		return $this->render('NSCmsBundle:Blocks:contentBlock.html.twig', array(
+		return $this->render($block->getTemplate('NSCmsBundle:Blocks:contentBlock.html.twig'), array(
 			'block'    => $block,
 			'settings' => $settings,
 			'content'  => $settings->getContent(),
 		));
 	}
 
-	/**
-	 * Menu block
-	 *
-	 * @param  Block $block
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function menuBlockAction(Block $block)
+    /**
+     * Menu block
+     *
+     * @param Request $request
+     * @param  Block  $block
+     * @return Response
+     */
+	public function menuBlockAction(Request $request, Block $block)
 	{
 		/** @var MenuBlockSettingsModel $settings */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
 
 		// root page
 		$rootPage = $this->getMenuRootPage($block, $settings);
 
 		// creating from root node
 		$factory = new MenuFactory();
-		$rootNode = new PageNode($rootPage, $this->getRouter());
+		$rootNode = new PageNode($rootPage, $this->get('router'));
 		$menu = $factory->createFromNode($rootNode);
 
 		// pages matcher
 		$matcher = new Matcher();
 		/** @var $page Page */
-		$page = $this->getRequest()->attributes->get('page');
+		$page = $request->attributes->get('page');
 		$matcher->addVoter(new PageVoter($page));
 
 		// rendering
-		return $this->render('NSCmsBundle:Blocks:menuBlock.html.twig', array(
+		return $this->render($block->getTemplate('NSCmsBundle:Blocks:menuBlock.html.twig'), array(
 			'block'    => $block,
 			'settings' => $settings,
 			'menu'     => $menu,
@@ -86,39 +87,15 @@ class BlocksController extends Controller
     public function mapBlockAction(Block $block)
     {
         /** @var MapBlockSettingsModel $settings */
-        $settings = $this->getBlockManager()->getBlockSettings($block);
+        $settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
 
         // rendering
-        return $this->render('NSCmsBundle:Blocks:mapBlock.html.twig', array(
+        return $this->render($block->getTemplate('NSCmsBundle:Blocks:mapBlock.html.twig'), array(
             'block'    => $block,
             'settings' => $settings,
             'uid'      => md5(uniqid('', true)),
         ));
     }
-
-	/**
-	 * @return BlockManager
-	 */
-	private function getBlockManager()
-	{
-		return $this->container->get('ns_cms.manager.block');
-	}
-
-	/**
-	 * @return PageService
-	 */
-	private function getPageService()
-	{
-		return $this->get('ns_cms.service.page');
-	}
-
-	/**
-	 * @return RouterInterface
-	 */
-	private function getRouter()
-	{
-		return $this->get('router');
-	}
 
 	/**
 	 * @param Block                  $block
@@ -128,7 +105,8 @@ class BlocksController extends Controller
 	 */
 	private function getMenuRootPage(Block $block, MenuBlockSettingsModel $settings)
 	{
-		$pageService = $this->getPageService();
+        /** @var PageService $pageService */
+		$pageService = $this->get('ns_cms.service.page');
 
 		// root page
 		$rootPageId = $settings->getRootPageId();
