@@ -35,7 +35,7 @@ class BlocksController extends Controller
 		/** @var $settings ContentBlockSettingsModel */
 		$settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
 
-		return $this->render($block->getTemplate('NSCmsBundle:Blocks:contentBlock.html.twig'), array(
+		return $this->render($block->getTemplate(), array(
 			'block'    => $block,
 			'settings' => $settings,
 			'content'  => $settings->getContent(),
@@ -69,7 +69,7 @@ class BlocksController extends Controller
 		$matcher->addVoter(new PageVoter($page));
 
 		// rendering
-		return $this->render($block->getTemplate('NSCmsBundle:Blocks:menuBlock.html.twig'), array(
+		return $this->render($block->getTemplate(), array(
 			'block'    => $block,
 			'settings' => $settings,
 			'menu'     => $menu,
@@ -90,7 +90,7 @@ class BlocksController extends Controller
         $settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
 
         // rendering
-        return $this->render($block->getTemplate('NSCmsBundle:Blocks:mapBlock.html.twig'), array(
+        return $this->render($block->getTemplate(), array(
             'block'    => $block,
             'settings' => $settings,
             'uid'      => md5(uniqid('', true)),
