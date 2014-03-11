@@ -4,6 +4,7 @@ namespace NS\CmsBundle\Controller;
 
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
+use Knp\Menu\MenuItem;
 use NS\CmsBundle\Block\Settings\MapBlockSettingsModel;
 use NS\CmsBundle\Block\Settings\MenuBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
@@ -45,22 +46,31 @@ class BlocksController extends Controller
     /**
      * Menu block
      *
-     * @param Request $request
-     * @param  Block  $block
+     * @param Request                $request
+     * @param  Block                 $block
+     * @param MenuBlockSettingsModel $settings
      * @return Response
      */
-	public function menuBlockAction(Request $request, Block $block)
+	public function menuBlockAction(Request $request, Block $block, MenuBlockSettingsModel $settings)
 	{
-		/** @var MenuBlockSettingsModel $settings */
-		$settings = $this->get('ns_cms.manager.block')->getBlockSettings($block);
-
-		// root page
 		$rootPage = $this->getMenuRootPage($block, $settings);
 
 		// creating from root node
 		$factory = new MenuFactory();
 		$rootNode = new PageNode($rootPage, $this->get('router'));
 		$menu = $factory->createFromNode($rootNode);
+
+        // skipping items (only root nodes)
+        foreach ($settings->getSkipArray() as $skip) {
+            /** @var MenuItem $node */
+            foreach ($menu->getChildren() as $node) {
+                /** @var Page $page */
+                $page = $node->getExtra('page');
+                if ($page->getName() === $skip) {
+                    $node->getParent()->removeChild($node);
+                }
+            }
+        }
 
 		// pages matcher
 		$matcher = new Matcher();

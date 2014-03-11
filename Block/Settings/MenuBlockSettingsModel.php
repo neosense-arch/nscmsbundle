@@ -18,6 +18,11 @@ class MenuBlockSettingsModel
 	 */
 	private $depth = 0;
 
+    /**
+     * @var string
+     */
+    private $skip = '';
+
 	/**
 	 * @param int $rootPageId
 	 */
@@ -49,4 +54,28 @@ class MenuBlockSettingsModel
 	{
 		return $this->depth;
 	}
+
+    /**
+     * @param string $skip
+     */
+    public function setSkip($skip)
+    {
+        $this->skip = $skip;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSkip()
+    {
+        return $this->skip;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSkipArray()
+    {
+        return explode(',', $this->skip);
+    }
 }

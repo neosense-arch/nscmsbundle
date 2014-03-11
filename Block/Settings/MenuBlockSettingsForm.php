@@ -27,6 +27,10 @@ class MenuBlockSettingsForm extends AbstractType
 			->add('depth', 'text', array(
 				'label' => 'Глубина',
 			))
+			->add('skip', 'text', array(
+                'label'    => 'Пропустить',
+                'required' => false,
+			))
 		;
     }
 
