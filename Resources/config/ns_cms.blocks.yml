@@ -2,7 +2,6 @@ blocks:
     -
         name: NSCmsBundle:Blocks:contentBlock
         title: Текстовый блок
-        form: "ns_cmsbundle_blockcontenttype"
         template: NSCmsBundle:Blocks:contentBlock.phtml.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\ContentBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\ContentBlockSettingsModel
@@ -10,7 +9,6 @@ blocks:
     -
         name: NSCmsBundle:Blocks:menuBlock
         title: Блок меню
-        form: "ns_cmsbundle_blockmenutype"
         template: NSCmsBundle:Blocks:menuBlock.phtml.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsModel
