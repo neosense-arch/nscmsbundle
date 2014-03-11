@@ -308,7 +308,15 @@ class Block implements ModelInterface
 	 */
 	public function getTemplate($default = null)
 	{
-		return $this->template ?: $default;
+        if ($this->template) {
+            return $this->template;
+        }
+
+        if ($this->type && $this->type->getTemplate()) {
+            return $this->type->getTemplate();
+        }
+
+		return $default;
 	}
 
     /**

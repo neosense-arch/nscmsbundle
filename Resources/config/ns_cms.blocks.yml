@@ -2,14 +2,14 @@ blocks:
     -
         name: NSCmsBundle:Blocks:contentBlock
         title: Текстовый блок
-        template: NSCmsBundle:Blocks:contentBlock.phtml.twig
+        template: NSCmsBundle:Blocks:contentBlock.html.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\ContentBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\ContentBlockSettingsModel
 
     -
         name: NSCmsBundle:Blocks:menuBlock
         title: Блок меню
-        template: NSCmsBundle:Blocks:menuBlock.phtml.twig
+        template: NSCmsBundle:Blocks:menuBlock.html.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\MenuBlockSettingsModel
         cache:
@@ -18,6 +18,6 @@ blocks:
     -
         name: NSCmsBundle:Blocks:mapBlock
         title: Блок карты
-        template: NSCmsBundle:Blocks:mapBlock.phtml.twig
+        template: NSCmsBundle:Blocks:mapBlock.html.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\MapBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\MapBlockSettingsModel
