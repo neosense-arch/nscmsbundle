@@ -57,7 +57,9 @@ class AdminBlocksController extends Controller
 			}
 
 			// template area
-			$area = $this->getTemplateManager()->getAreaByPageAndName($page, $_GET['areaName']);
+            /** @var TemplateManager $templateManager */
+            $templateManager = $this->get('ns_cms.manager.template');
+			$area = $templateManager->getAreaByPageAndName($page, $_GET['areaName']);
 
 			// adding block
 			$block = new Block();
@@ -77,22 +79,7 @@ class AdminBlocksController extends Controller
 			$this->getDoctrine()->getManager()->flush();
 
             // overriding block template
-            $defaultTemplateFileName = $blockType->getTemplateFilePath();
-
-            $targetTemplate = str_replace(array(
-                ':', $blockType->getBundle()->getName()
-            ), array(
-                '/', $blockType->getBundle()->getName() . '/views'
-            ), $blockType->getTemplate());
-
-            $targetTemplateFileName = $this->get('kernel')->getRootDir() . '/Resources/' . $targetTemplate;
-
-            // creating directory
-            $dir = dirname($targetTemplateFileName);
-            if (file_exists($defaultTemplateFileName) && !file_exists($targetTemplateFileName)) {
-                @mkdir($dir, 0777, true);
-                @copy($defaultTemplateFileName, $targetTemplateFileName);
-            }
+            $templateManager->createUserTemplate($block->getType()->getTemplate());
 
 			// retrieving new block id
 			return new JsonResponse(array(
@@ -139,7 +126,9 @@ class AdminBlocksController extends Controller
 			}
 
 			// template area
-			$area = $this->getTemplateManager()->getAreaByPageAndName($page, $_GET['areaName']);
+            /** @var TemplateManager $templateManager */
+            $templateManager = $this->get('ns_cms.manager.template');
+			$area = $templateManager->getAreaByPageAndName($page, $_GET['areaName']);
 
 			// reordering
 			$block->setArea($area);
