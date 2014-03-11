@@ -274,6 +274,10 @@ class AdminBlocksController extends Controller
 		// validating form
 		$form->handleRequest($request);
         if ($form->isValid()) {
+            /** @var TemplateManager $templateManager */
+            $templateManager = $this->get('ns_cms.manager.template');
+            $templateManager->createUserTemplate($block->getType()->getTemplate(), $block->getTemplate());
+
             $this->getDoctrine()->getManager()->flush();
             return $this->redirect($this->getRedirectUri());
         }

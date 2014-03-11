@@ -2,11 +2,11 @@
 
 namespace NS\CmsBundle\Manager;
 
+use NS\CmsBundle\Entity\Area;
+use NS\CmsBundle\Entity\Page;
 use NS\CmsBundle\Entity\Template;
 use NS\CmsBundle\Entity\TemplateRepository;
-
-use NS\CmsBundle\Entity\Page;
-use NS\CmsBundle\Entity\Area;
+use NS\CmsBundle\Service\TemplateLocationService;
 
 /**
  * CMS templates manager
@@ -18,6 +18,11 @@ class TemplateManager
 	 * @var TemplateRepository
 	 */
 	private $templateRepository;
+
+    /**
+     * @var TemplateLocationService
+     */
+    private $templateLocationService;
 
 	/**
 	 * Retrieves area by page and area name
@@ -31,6 +36,28 @@ class TemplateManager
 		$template = $this->getPageTemplate($page);
 		return $this->getAreaByTemplateAndName($template, $name);
 	}
+
+    /**
+     * Copies template to user app/Resources/views directory
+     *
+     * @param string $template    template name (i.e. "NSCmsBundle:Blocks:contentBlock.html.twig")
+     * @param string $destination template name (i.e. "NSCmsBundle:Blocks:contentBlock_alternative.html.twig")
+     */
+    public function createUserTemplate($template, $destination = null)
+    {
+        if (!$destination) {
+            // copying to app/Resources dir with the same name
+            $destination = $template;
+        }
+
+        $templateFileName    = $this->templateLocationService->getVendorTemplateFileName($template);
+        $destinationFileName = $this->templateLocationService->getLocalTemplateFileName($destination);
+
+        if ($templateFileName != $destinationFileName && !file_exists($destinationFileName) && file_exists($templateFileName)) {
+            @mkdir(dirname($destinationFileName), 0777, true);
+            @copy($templateFileName, $destinationFileName);
+        }
+    }
 
 	/**
 	 * Retrieves page template
@@ -89,5 +116,13 @@ class TemplateManager
     public function setTemplateRepository(TemplateRepository $templateRepository)
     {
         $this->templateRepository = $templateRepository;
+    }
+
+    /**
+     * @param TemplateLocationService $templateLocationService
+     */
+    public function setTemplateLocationService(TemplateLocationService $templateLocationService)
+    {
+        $this->templateLocationService = $templateLocationService;
     }
 }

@@ -73,10 +73,15 @@ services:
         calls:
             - [setTemplateRepository, [@ns_cms.repository.template]]
 
+    ns_cms.service.template_location:
+        class: 'NS\CmsBundle\Service\TemplateLocationService'
+        arguments: [@templating.name_parser, @templating.locator, @kernel]
+
     ns_cms.manager.template:
         class: %ns_cms.manager.template.class%
         calls:
             - [setTemplateRepository, [@ns_cms.repository.template]]
+            - [setTemplateLocationService, [@ns_cms.service.template_location]]
 
     ns_cms.manager.block:
         class: %ns_cms.manager.block.class%
