@@ -20,14 +20,6 @@ class TemplateManager
 	private $templateRepository;
 
 	/**
-	 * @param TemplateRepository $templateRepository
-	 */
-	public function setTemplateRepository(TemplateRepository $templateRepository)
-	{
-		$this->templateRepository = $templateRepository;
-	}
-
-	/**
 	 * Retrieves area by page and area name
 	 *
 	 * @param Page $page
@@ -51,11 +43,11 @@ class TemplateManager
 	{
 		// default page template
 		if (!$page->getTemplatePath()) {
-			return $this->getTemplateRepository()->findDefaultTemplate();
+			return $this->templateRepository->findDefaultTemplate();
 		}
 
 		// searching for template
-		$template = $this->getTemplateRepository()->findTemplateByPath($page->getTemplatePath());
+		$template = $this->templateRepository->findTemplateByPath($page->getTemplatePath());
 		if (!$template) {
 			throw new \Exception(sprintf(
 				"Page #%u template '%s' wasn't found",
@@ -91,11 +83,11 @@ class TemplateManager
 		));
 	}
 
-	/**
-	 * @return TemplateRepository
-	 */
-	private function getTemplateRepository()
-	{
-		return $this->templateRepository;
-	}
+    /**
+     * @param TemplateRepository $templateRepository
+     */
+    public function setTemplateRepository(TemplateRepository $templateRepository)
+    {
+        $this->templateRepository = $templateRepository;
+    }
 }
