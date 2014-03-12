@@ -80,10 +80,11 @@ class BlocksController extends Controller
 
 		// rendering
 		return $this->render($block->getTemplate(), array(
-			'block'    => $block,
-			'settings' => $settings,
-			'menu'     => $menu,
-			'matcher'  => $matcher,
+            'page'     => $page,
+            'block'    => $block,
+            'settings' => $settings,
+            'menu'     => $menu,
+            'matcher'  => $matcher,
 		));
 	}
 
