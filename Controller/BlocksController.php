@@ -78,13 +78,23 @@ class BlocksController extends Controller
 		$page = $request->attributes->get('page');
 		$matcher->addVoter(new PageVoter($page));
 
+        // active root
+        $currentItem = null;
+        foreach ($menu->getChildren() as $item) {
+            if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
+                $currentItem = $item;
+                break;
+            }
+        }
+
 		// rendering
 		return $this->render($block->getTemplate(), array(
-            'page'     => $page,
-            'block'    => $block,
-            'settings' => $settings,
-            'menu'     => $menu,
-            'matcher'  => $matcher,
+            'page'        => $page,
+            'block'       => $block,
+            'settings'    => $settings,
+            'menu'        => $menu,
+            'matcher'     => $matcher,
+            'currentItem' => $currentItem,
 		));
 	}
 
