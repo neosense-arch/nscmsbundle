@@ -4,6 +4,7 @@ namespace NS\CmsBundle\Command;
 
 use NS\CmsBundle\Entity\Page;
 use NS\CmsBundle\Entity\PageRepository;
+use NS\CmsBundle\Manager\TemplateManager;
 use NS\CmsBundle\Service\PageService;
 use NS\CoreBundle\Service\VersionService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -68,6 +69,10 @@ class InstallCommand extends ContainerAwareCommand
 
         // installing catalog
         $this->stepInstallCatalog($input, $output);
+        $output->writeln("");
+
+        // copying base template
+        $this->stepCopyBaseTemplate($input, $output);
         $output->writeln("");
 
         $output->writeln("<info>DONE!</info>");
@@ -244,6 +249,26 @@ class InstallCommand extends ContainerAwareCommand
         }
         else {
             $output->writeln("Skipping catalog installation");
+        }
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    private function stepCopyBaseTemplate(InputInterface $input, OutputInterface $output)
+    {
+        /** @var DialogHelper $dialog */
+        $dialog = $this->getHelper('dialog');
+        if ($dialog->askConfirmation($output, "Do you want to <info>copy default page template</info>? [Y/n] ")) {
+            $template = 'NSCmsBundle:Pages:page.html.twig';
+            $output->writeln("Copying template <info>{$template}</info> to app/Resources/views");
+            /** @var TemplateManager $templateManager */
+            $templateManager = $this->getContainer()->get('ns_cms.manager.template');
+            $templateManager->createUserTemplate('NSCmsBundle:Pages:page.html.twig');
+        }
+        else {
+            $output->writeln("Skipping template copying");
         }
     }
 
