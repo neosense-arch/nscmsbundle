@@ -129,6 +129,11 @@ class PagesController extends Controller
 				return $this->get404Response($page->getName());
 			}
 
+            // block redirect
+            if ($response->isRedirection()) {
+                return $response;
+            }
+
 			// setting block content
 			$block->setHtml($response->getContent());
 
