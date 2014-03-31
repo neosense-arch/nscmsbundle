@@ -1,25 +1,92 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ page.title }}</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# HEAD STYLES #}
+    {% block head_styles %}
+        {{ ns_cdn('bootstrap-2-css') }}
+    {% endblock %}
+
+    <style type="text/css">
+        .ns-area {
+            border:dashed 2px #aaa;
+            border-radius: 10px;
+            margin: 20px;
+            padding:20px;
+        }
+        .ns-area-label {
+            color: #aaa;
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1em;
+            overflow: hidden;
+        }
+        .ns-sincerely {
+            margin: 20px 0;
+            text-align: right;
+        }
+    </style>
+</head>
 <body>
-	Page {{ page.title }}
+	<div class="container">
+        <div class="navbar">
+            <div class="navbar-inner">
+                    <ul class="nav">
+                        <li><a href="{{ url('ns_cms_main') }}">Главная</a></li>
+                        <li><a href="#">Страница 1</a></li>
+                        <li><a href="#">Страница 2</a></li>
+                        <li><a href="#">Страница 3</a></li>
+                    </ul>
+            </div>
+        </div>
 
-	<div>
-		<h1>Top area blocks (areaName='top')</h1>
-		{% for block in blocks %}
-			{% if block.areaName == 'top' %}
-				<div>{{ block.typeName }}</div>
-				{{ block.html | raw }}
-			{% endif %}
-		{% endfor %}
-	</div>
+        <div class="row">
+            <div class="span12">
+                <div class="ns-area">
+                    <div class="ns-area-label">Top area</div>
+                    {{ ns_cms_area(blocks, 'top') }}
+                </div>
+            </div>
+        </div>
 
-	<div>
-		<h1>Content area blocks (areaName='content')</h1>
-		{% for block in blocks %}
-			{% if block.areaName == 'content' %}
-				<div>{{ block.typeName }}</div>
-				{{ block.html | raw }}
-			{% endif %}
-		{% endfor %}
-	</div>
+        <div class="row">
+            <div class="span4">
+                <div class="ns-area">
+                    <div class="ns-area-label">Left area</div>
+                    {{ ns_cms_area(blocks, 'left') }}
+                </div>
+            </div>
+            <div class="span8">
+                <div class="ns-area">
+                    <div class="ns-area-label">Content area</div>
+                    {{ ns_cms_area(blocks, 'content') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span12">
+                <div class="ns-area">
+                    <div class="ns-area-label">Footer area</div>
+                    {{ ns_cms_area(blocks, 'footer') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="span12">
+                <div class="ns-sincerely">
+                    <a href="http://neosense.ru" target="_blank">
+                        <img src="{{ asset('bundles/nsadmin/images/sincerely.png') }}" >
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
