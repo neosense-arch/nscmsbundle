@@ -53,7 +53,7 @@ class TemplateManager
         $templateFileName    = $this->templateLocationService->getVendorTemplateFileName($template);
         $destinationFileName = $this->templateLocationService->getLocalTemplateFileName($destination);
 
-        if ($templateFileName != $destinationFileName && !file_exists($destinationFileName) && file_exists($templateFileName)) {
+        if ($templateFileName != $destinationFileName && !file_exists($destinationFileName)) {
             @mkdir(dirname($destinationFileName), 0777, true);
             @copy($templateFileName, $destinationFileName);
         }

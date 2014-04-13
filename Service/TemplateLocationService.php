@@ -77,12 +77,18 @@ class TemplateLocationService
      * Retrieves vendor template file name
      *
      * @param string $template short template name
-     * @return string
+     * @return string|null
      */
     public function getVendorTemplateFileName($template)
     {
         $reference = $this->templateNameParser->parse($template);
 
-        return $this->kernel->locateResource($reference->getPath());
+        try {
+            return $this->kernel->locateResource($reference->getPath());
+        }
+        catch (\InvalidArgumentException $e) {
+        }
+
+        return null;
     }
 } 
