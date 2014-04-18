@@ -14,3 +14,7 @@ ns_cms_page_name:
 ns_cms_main:
     pattern: '/'
     defaults: { _controller: NSCmsBundle:Pages:main }
+
+ns_cms_block:
+    pattern:  '/block/{blockId}/{pageId}'
+    defaults: { _controller: NSCmsBundle:Pages:block }

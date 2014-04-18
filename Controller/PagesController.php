@@ -72,6 +72,26 @@ class PagesController extends Controller
 			: $this->get404Response($name);
 	}
 
+    /**
+     * @param int $blockId
+     * @param int $pageId
+     * @return Response
+     * @throws \Exception
+     */
+    public function blockAction($blockId, $pageId)
+    {
+        $block = $this->getBlockManager()->getBlock($blockId);
+        if (!$block) {
+            throw new \Exception("Block #{$blockId} wasn't found");
+        }
+        $page = $this->getPageRepository()->findPageById($pageId);
+        if (!$page) {
+            throw new \Exception("Page #{$pageId} wasn't found");
+        }
+
+        return $this->processBlock($block, $page);
+    }
+
 	/**
 	 * @param string|int $pageName
 	 * @return RedirectResponse
@@ -98,31 +118,13 @@ class PagesController extends Controller
 	 */
 	private function getPageResponse(Page $page, $statusCode = null)
 	{
-		/** @var $kernel Kernel */
-		$kernel = $this->container->get('kernel');
-
 		// rendering blocks
 		$headers = array();
 		$cookies = array();
 		foreach ($this->getBlockManager()->getPageBlocks($page) as $block) {
-			// new request
-			$request = $this->createBlockRequest($block, $page);
 
-			// before block process event
-			$beforeBlockProcessEvent = new BeforeBlockProcessEvent($request, $block, $page);
-			$this->getEventDispatcher()->dispatch(BlockEvents::BEFORE_PROCESS, $beforeBlockProcessEvent);
-
-			// retrieving response
-			if ($beforeBlockProcessEvent->hasResponse()) {
-				$response = $beforeBlockProcessEvent->getResponse();
-			}
-			else {
-				$response = $kernel->handle($request);
-			}
-
-			// after block process event
-			$afterBlockProcessEvent = new AfterBlockProcessEvent($block, $page, $response, $beforeBlockProcessEvent->hasResponse());
-			$this->getEventDispatcher()->dispatch(BlockEvents::AFTER_PROCESS, $afterBlockProcessEvent);
+            // processing block
+			$response = $this->processBlock($block, $page);
 
 			// block can throw 404
 			if ($response->getStatusCode() === 404) {
@@ -194,6 +196,40 @@ class PagesController extends Controller
 
 		return $request;
 	}
+
+    /**
+     * Processes block
+     *
+     * @param Block $block
+     * @param Page  $page
+     * @return Response
+     */
+    private function processBlock(Block $block, Page $page)
+    {
+        /** @var $kernel Kernel */
+        $kernel = $this->container->get('kernel');
+
+        // new request
+        $request = $this->createBlockRequest($block, $page);
+
+        // before block process event
+        $beforeBlockProcessEvent = new BeforeBlockProcessEvent($request, $block, $page);
+        $this->getEventDispatcher()->dispatch(BlockEvents::BEFORE_PROCESS, $beforeBlockProcessEvent);
+
+        // retrieving response
+        if ($beforeBlockProcessEvent->hasResponse()) {
+            $response = $beforeBlockProcessEvent->getResponse();
+        }
+        else {
+            $response = $kernel->handle($request);
+        }
+
+        // after block process event
+        $afterBlockProcessEvent = new AfterBlockProcessEvent($block, $page, $response, $beforeBlockProcessEvent->hasResponse());
+        $this->getEventDispatcher()->dispatch(BlockEvents::AFTER_PROCESS, $afterBlockProcessEvent);
+
+        return $response;
+    }
 
 	/**
 	 * Retrieves pages repository
