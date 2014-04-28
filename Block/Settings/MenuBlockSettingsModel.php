@@ -23,6 +23,11 @@ class MenuBlockSettingsModel
      */
     private $skip = '';
 
+    /**
+     * @var bool
+     */
+    private $isSubmenu = false;
+
 	/**
 	 * @param int $rootPageId
 	 */
@@ -77,5 +82,21 @@ class MenuBlockSettingsModel
     public function getSkipArray()
     {
         return explode(',', $this->skip);
+    }
+
+    /**
+     * @param boolean $isSubmenu
+     */
+    public function setIsSubmenu($isSubmenu)
+    {
+        $this->isSubmenu = $isSubmenu;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsSubmenu()
+    {
+        return $this->isSubmenu;
     }
 }

@@ -60,6 +60,27 @@ class BlocksController extends Controller
 		$rootNode = new PageNode($rootPage, $this->get('router'));
 		$menu = $factory->createFromNode($rootNode);
 
+        // pages matcher
+        $matcher = new Matcher();
+        /** @var $page Page */
+        $page = $request->attributes->get('page');
+        $matcher->addVoter(new PageVoter($page));
+
+        // active root
+        $currentItem = null;
+        foreach ($menu->getChildren() as $item) {
+            if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
+                $currentItem = $item;
+                break;
+            }
+        }
+
+        // submenu
+        if ($settings->getIsSubmenu() && $currentItem) {
+            $breadcrumbs = array_slice($currentItem->getBreadcrumbsArray(), $settings->getDepth());
+            $menu = $breadcrumbs[0]['item'];
+        }
+
         // skipping items (only root nodes)
         foreach ($settings->getSkipArray() as $skip) {
             /** @var MenuItem $node */
@@ -69,21 +90,6 @@ class BlocksController extends Controller
                 if ($page->getName() === $skip) {
                     $node->getParent()->removeChild($node);
                 }
-            }
-        }
-
-		// pages matcher
-		$matcher = new Matcher();
-		/** @var $page Page */
-		$page = $request->attributes->get('page');
-		$matcher->addVoter(new PageVoter($page));
-
-        // active root
-        $currentItem = null;
-        foreach ($menu->getChildren() as $item) {
-            if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
-                $currentItem = $item;
-                break;
             }
         }
 

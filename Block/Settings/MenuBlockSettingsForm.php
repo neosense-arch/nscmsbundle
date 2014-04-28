@@ -31,6 +31,10 @@ class MenuBlockSettingsForm extends AbstractType
                 'label'    => 'Пропустить',
                 'required' => false,
 			))
+            ->add('isSubmenu', 'checkbox', array(
+                'label'    => 'Субменю',
+                'required' => false,
+            ))
 		;
     }
 
