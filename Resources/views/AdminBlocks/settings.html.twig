@@ -8,6 +8,7 @@
 	<form method="post" {{ form_enctype(form) }} autocomplete="off">
 		{{ form_errors(form) }}
 		{{ form_rest(form) }}
+        <hr>
 		<button class="btn btn-success">Сохранить</button>
 		<a href="{{ redirect }}" class="btn">Отмена</a>
 	</form>
