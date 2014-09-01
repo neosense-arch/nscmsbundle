@@ -1,4 +1,13 @@
+{# Example 1. Simple 1-level menu #}
+<ul>
+    {% for item in menu.children if item.displayed %}
+        <li{% if matcher.isCurrent(item) or matcher.isAncestor(item) %} class="active"{% endif %}>
+            <a href="{{ item.uri }}">{{ item.label }}</a>
+        </li>
+    {% endfor %}
+</ul>
 
+{# Example 2. Recursive infinite-level menu #}
 {% macro menu_items(items, matcher) %}
 	{% for item in items if item.displayed %}
         <li>
@@ -15,7 +24,6 @@
         </li>
 	{% endfor %}
 {% endmacro %}
-
 <div>
 	<ul>
 		{{ _self.menu_items(menu.children, matcher) }}
