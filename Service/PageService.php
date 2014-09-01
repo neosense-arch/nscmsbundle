@@ -92,6 +92,58 @@ class PageService
         ));
     }
 
+    /**
+     * Retrieve page by id or name
+     *
+     * @param string|int|Page $identifier
+     * @return Page|null
+     */
+    public function getPage($identifier)
+    {
+        if (is_numeric($identifier)) {
+            return $this->getPageById($identifier);
+        }
+        if (is_string($identifier)) {
+            return $this->getPageByName($identifier);
+        }
+        return null;
+    }
+
+    /**
+     * Creates new page instance without saving to DB
+     *
+     * @param string|null          $title
+     * @param string|null          $name
+     * @param string|int|Page|null $parent
+     * @return Page
+     */
+    public function createPage($title = null, $name = null, $parent = null)
+    {
+        if ($parent && !$parent instanceof Page) {
+            $parent = $this->getPage($parent);
+        }
+
+        $page = new Page();
+        $page->setTitle($title);
+        $page->setName($name);
+        $page->setParent($parent);
+
+        return $page;
+    }
+
+    /**
+     * Updates page
+     *
+     * @param Page $page
+     * @return $this
+     */
+    public function updatePage(Page $page)
+    {
+        $this->entityManager->persist($page);
+        $this->entityManager->flush();
+        return $this;
+    }
+
 	/**
 	 * @param ObjectManager $entityManager
 	 */

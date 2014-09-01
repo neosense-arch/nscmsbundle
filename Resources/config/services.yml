@@ -20,6 +20,12 @@ parameters:
     ns_cms.search.content.repository.class: 'NS\CmsBundle\Search\ContentRepository'
 
 services:
+    # Install event listener
+    ns_cms.event.install_listener:
+        class: 'NS\CmsBundle\Event\InstallListener'
+        arguments: [@ns_cms.service.page, @ns_cms.manager.template]
+        tags: [{ name: kernel.event_listener, event: ns_core.install, method: onInstall, priority: 255 }]
+
     ns_cms.form.element.page_select_type:
         class: %ns_cms.form.element.page_select_type.class%
         calls:
