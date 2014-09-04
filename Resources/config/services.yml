@@ -94,6 +94,7 @@ services:
         calls:
             - [setBlockRepository, [@ns_cms.repository.block]]
             - [setBlockTypeRepository, [@ns_cms.repository.blocktype]]
+            - [setEntityManager, [@doctrine.orm.entity_manager]]
 
     ns_cms.twig.extension.area:
         class: %ns_cms.twig.extension.area.class%

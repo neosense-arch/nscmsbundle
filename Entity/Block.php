@@ -57,7 +57,7 @@ class Block implements ModelInterface
 	/**
 	 * @var string
 	 * @Gedmo\SortableGroup
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	private $areaName;
 
@@ -221,6 +221,12 @@ class Block implements ModelInterface
 		$this->setAreaName($area->getName());
 	}
 
+    public function removeArea()
+    {
+        $this->area = null;
+        $this->setAreaName(null);
+    }
+
 	/**
 	 * @return Area
 	 */
@@ -333,6 +339,14 @@ class Block implements ModelInterface
     public function getUseCache()
     {
         return $this->useCache;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBuffered()
+    {
+        return !$this->page && !$this->areaName;
     }
 
 }

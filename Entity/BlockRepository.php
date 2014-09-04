@@ -120,4 +120,19 @@ class BlockRepository extends EntityRepository
 	{
 		return $this->findBy(array('shared' => true), array('title' => 'ASC'));
 	}
+
+    /**
+     * Retrieves unlinked buffer blocks
+     *
+     * @return Block[]
+     */
+    public function findBufferBlocks()
+    {
+        $queryBuilder = $this->createQueryBuilder('b')
+            ->andWhere('b.page IS NULL')
+            ->andWhere('b.areaName IS NULL')
+            ->addOrderBy('b.position');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

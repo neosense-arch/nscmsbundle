@@ -5,7 +5,6 @@ namespace NS\CmsBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use NS\CmsBundle\Entity\Block;
@@ -104,9 +103,6 @@ class AdminBlocksController extends Controller
 			if (empty($_GET['blockId'])) {
 				return new JsonResponse(array('error' => 'Param "blockId" is required'));
 			}
-			if (empty($_GET['areaName'])) {
-				return new JsonResponse(array('error' => 'Param "areaName" is required'));
-			}
 			if (empty($_GET['pageId'])) {
 				return new JsonResponse(array('error' => 'Param "pageId" is required'));
 			}
@@ -125,22 +121,29 @@ class AdminBlocksController extends Controller
 				return new JsonResponse(array('error' => "Page #{$_GET['pageId']} wasn't found"));
 			}
 
-			// template area
-            /** @var TemplateManager $templateManager */
-            $templateManager = $this->get('ns_cms.manager.template');
-			$area = $templateManager->getAreaByPageAndName($page, $_GET['areaName']);
+            // setting area
+            if (!empty($_GET['areaName'])) {
+                // template area
+                /** @var TemplateManager $templateManager */
+                $templateManager = $this->get('ns_cms.manager.template');
+                $area = $templateManager->getAreaByPageAndName($page, $_GET['areaName']);
+                $block->setArea($area);
 
-			// reordering
-			$block->setArea($area);
-			$block->setPosition($_GET['position']);
+                // adding page link if area is not fixed
+                if ($area->isFixed()) {
+                    $block->removePage();
+                }
+                else {
+                    $block->setPage($page);
+                }
+            }
+            else {
+                $block->removeArea();
+                $block->removePage();
+            }
 
-			// adding page link if area is not fixed
-			if ($area->isFixed()) {
-				$block->removePage();
-			}
-			else {
-				$block->setPage($page);
-			}
+            // reordering
+            $block->setPosition($_GET['position']);
 
 			// saving block
 			$this->getDoctrine()->getManager()->flush();
@@ -185,6 +188,38 @@ class AdminBlocksController extends Controller
 			return new JsonResponse(array('error' => "Exception occurred: {$e->getMessage()}"));
 		}
 	}
+
+    /**
+     * Clones blocks
+     *
+     * @throws \Exception
+     * @return JsonResponse
+     */
+    public function ajaxCloneAction()
+    {
+        try {
+            if (empty($_GET['blockId'])) {
+                return new JsonResponse(array('error' => 'Param "blockId" is required'));
+            }
+
+            // checking block
+            /** @var BlockManager $blockManager */
+            $blockManager = $this->get('ns_cms.manager.block');
+            $block = $blockManager->getBlock($_GET['blockId']);
+
+            // cloning block
+            $clone = $blockManager->cloneBlock($block);
+
+            // retrieving new block id
+            return new JsonResponse(array(
+                'id'    => $clone->getId(),
+                'title' => $clone->getTitle(),
+            ));
+        }
+        catch (\Exception $e) {
+            return new JsonResponse(array('error' => "Exception occurred: {$e->getMessage()}"));
+        }
+    }
 
     /**
      * @param Request $request

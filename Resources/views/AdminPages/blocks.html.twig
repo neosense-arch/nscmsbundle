@@ -70,6 +70,26 @@
 				});
 			};
 
+			// clones block
+			var fnCloneBlock = function(blockId, callback) {
+				$('#ns-loader').animate({'opacity': 1});
+				$.ajax({
+					'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCmsBundle', adminController: 'blocks', adminAction: 'ajaxClone' }) }}',
+					'data': {
+						blockId:   blockId
+					}
+				})
+				.done(function(res){
+					if (res && typeof(res.error) != 'undefined') {
+						throw res.error;
+					}
+					callback(res.id, res.title);
+				})
+				.always(function(){
+					$('#ns-loader').animate({'opacity': 0});
+				});
+			};
+
 			/**
 			 * Delete handler
 			 * @return {Boolean}
@@ -97,14 +117,41 @@
 				return false;
 			};
 
+            /**
+             * Clone handler
+             */
+            var fnCloneBlockHandler = function(){
+                var block = $(this).parents('.block-type');
+                var clone = block.clone();
+                clone.insertAfter(block).attr('data-id', null).find('.title').text('...');
+                fnCloneBlock(block.attr('data-id'), function(id, title){
+                    clone.attr('data-id', id);
+                    clone.find('.title').text(title);
+                    fnAttachBlockHandlers(clone);
+                });
+                return false;
+            };
+
+            /**
+             * Attaches block handlers
+             * @param block
+             */
+            var fnAttachBlockHandlers = function(block){
+                block = $(block || '.block-area .block-type');
+                block.find('.block-remove').click(fnDeleteBlockHandler);
+                block.find('.block-update').click(fnUpdateBlockHandler);
+                block.find('.block-clone').click(fnCloneBlockHandler);
+            };
+
 			// sortable
 			$('.block-area').sortable({
-				axis: 'y',
 				connectWith: '.block-area',
+                placeholder: 'block-type-placeholder',
 				stop: function(e, ui){
 					var areaName = ui.item.parents('.block-area').attr('data-name'),
 						pageId   = {{ page.id }},
-						position = ui.item.parents('.block-area').find('.block-type').index(ui.item);
+						position = ui.item.parents('.block-area').find('.block-type').index(ui.item) + 1;
+                    console.log(position);
 
 					// real block, reordering
 					if (ui.item.attr('data-id')) {
@@ -118,10 +165,7 @@
 							ui.item.attr('data-id', id);
 							ui.item.find('.title').text(title);
 						});
-						// delete handler
-						ui.item.find('.block-remove').click(fnDeleteBlockHandler);
-						// update handler
-						ui.item.find('.block-update').click(fnUpdateBlockHandler);
+                        fnAttachBlockHandlers(ui.item);
 					}
 				}
 			});
@@ -134,10 +178,8 @@
 				helper: 'clone'
 			});
 
-			// block removal
-			$('.block-area .block-type .block-remove').click(fnDeleteBlockHandler);
-			// block update
-			$('.block-area .block-type .block-update').click(fnUpdateBlockHandler);
+            // attaching block handlers
+            fnAttachBlockHandlers();
 		});
 	</script>
 {% endblock %}
@@ -150,6 +192,7 @@
 		<i class="icon-th-large"></i>
 		<span class="title">{{ title }}</span>
 		<div class="btn-group pull-right">
+			<a href="#" class="btn btn-mini block-clone" title="Клонировать блок"><i class="icon-plus"></i></a>
 			<a href="#" class="btn btn-mini block-update"><i class="icon-wrench"></i></a>
 			<a href="#" class="btn btn-mini block-remove"><i class="icon-remove"></i></a>
 		</div>
@@ -172,6 +215,7 @@
 			cursor: move;
 			height: 22px;
 			padding: 3px;
+            position: relative;
 		}
 		.block-type:hover {
 			background: #fff;
@@ -180,6 +224,8 @@
 		}
 		.block-type .btn-group {
 			display: none;
+            position: absolute;
+            right: 3px;
 		}
 		.block-area .block-type:hover {
 			background: #f5f5f5;
@@ -190,6 +236,14 @@
 		.block-area.fixed {
 			background: #f9f9f9 url('/bundles/nsadmin/images/ps_neutral.png');
 		}
+        .block-type-placeholder {
+            background: #f9f9f9;
+            border: solid 1px #f5f5f5;
+            border-radius: 5px;
+            height: 22px;
+            padding: 3px;
+            width:100%;
+        }
 
 	</style>
 
@@ -231,6 +285,14 @@
 							{{ _self.block_item(null, blockType.name, blockType.title) }}
 						{% endfor %}
 					</div>
+                    <div class="well">
+                        <h4>Буфер обмена</h4>
+                        <div class="block-area">
+                            {% for block in buffered %}
+                                {{ _self.block_item(block.id, null, block.title) }}
+                            {% endfor %}
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>

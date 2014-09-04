@@ -192,12 +192,16 @@ class AdminPagesController extends Controller
 		// shared blocks
 		$shared = $this->getBlockManager()->getSharedBlocks();
 
+        // buffered blocks
+        $buffered = $this->getBlockManager()->getBufferBlocks();
+
 		return $this->render('NSCmsBundle:AdminPages:blocks.html.twig', array(
 			'page'       => $page,
 			'template'   => $template,
 			'blockTypes' => $blockTypes,
 			'blocks'     => $blocks,
 			'shared'     => $shared,
+            'buffered'   => $buffered,
 		));
 	}
 

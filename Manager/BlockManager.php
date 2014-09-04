@@ -2,6 +2,7 @@
 
 namespace NS\CmsBundle\Manager;
 
+use Doctrine\ORM\EntityManager;
 use NS\CmsBundle\Entity\Block;
 use NS\CmsBundle\Entity\BlockRepository;
 use NS\CmsBundle\Entity\Page;
@@ -23,6 +24,11 @@ class BlockManager
 	 * @var BlockTypeRepository
 	 */
 	private $blockTypeRepository;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
 
 	/**
 	 * Retrieves page blocks
@@ -80,6 +86,16 @@ class BlockManager
 		return $this->blockRepository->findSharedBlocks();
 	}
 
+    /**
+     * Retrieves buffer blocks
+     *
+     * @return Block[]
+     */
+    public function getBufferBlocks()
+    {
+        return $this->blockRepository->findBufferBlocks();
+    }
+
 	/**
 	 * Retrieves block settings
 	 *
@@ -121,6 +137,22 @@ class BlockManager
 	}
 
     /**
+     * @param Block $block
+     * @return Block
+     */
+    public function cloneBlock(Block $block)
+    {
+        $clone = clone $block;
+
+        $clone->setPosition($block->getPosition() + 1);
+
+        $this->entityManager->detach($clone);
+        $this->entityManager->persist($clone);
+        $this->entityManager->flush();
+        return $clone;
+    }
+
+    /**
      * @param BlockRepository $blockRepository
      */
     public function setBlockRepository(BlockRepository $blockRepository)
@@ -134,6 +166,14 @@ class BlockManager
     public function setBlockTypeRepository(BlockTypeRepository $blockTypeRepository)
     {
         $this->blockTypeRepository = $blockTypeRepository;
+    }
+
+    /**
+     * @param EntityManager $entityManager
+     */
+    public function setEntityManager(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
     }
 
     /**
