@@ -207,6 +207,7 @@
 			border: dashed 3px #eee;
 			border-radius: 10px;
 			margin: 0 0 20px 0;
+            min-height: 30px;
 			overflow: hidden;
 			padding: 10px;
 		}
@@ -256,22 +257,23 @@
 
 			<div class="row">
 				<div class="span6">
-					{% for area in template.areas %}
-						<div class="block-area-container{% if area.fixed %} fixed{% endif %}">
-							<h4>
-								{{ area.title }}
-								{% if area.fixed %}
-									<i class="icon-globe"></i>
-								{% endif %}
-							</h4>
-							<div class="block-area{% if area.fixed %} fixed{% endif %}" data-name="{{ area.name }}">
-								{% for block in blocks %}
-									{% if block.areaName == area.name %}
-										{{ _self.block_item(block.id, null, block.title) }}
-									{% endif %}
-								{% endfor %}
-							</div>
-						</div>
+					{% for row in areaRows %}
+                        <div class="row">
+                            {% for area in row %}
+                                <div class="span{{ 6/row|length }}">
+                                    <div class="block-area-container{% if area.fixed %} fixed{% endif %}">
+                                        <h4>{{ area.title }}</h4>
+                                        <div class="block-area{% if area.fixed %} fixed{% endif %}" data-name="{{ area.name }}">
+                                            {% for block in blocks %}
+                                                {% if block.areaName == area.name %}
+                                                    {{ _self.block_item(block.id, null, block.title) }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
 					{% endfor %}
 				</div>
 				<div class="span3">

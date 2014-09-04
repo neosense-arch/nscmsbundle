@@ -195,6 +195,16 @@ class AdminPagesController extends Controller
         // buffered blocks
         $buffered = $this->getBlockManager()->getBufferBlocks();
 
+        // area rows
+        $areaRows = array();
+        foreach ($template->getAreas() as $area) {
+            $rowName = $area->getRow() ?: uniqid();
+            if (!isset($areaRows[$rowName])) {
+                $areaRows[$rowName] = array();
+            }
+            $areaRows[$rowName][] = $area;
+        }
+
 		return $this->render('NSCmsBundle:AdminPages:blocks.html.twig', array(
 			'page'       => $page,
 			'template'   => $template,
@@ -202,6 +212,7 @@ class AdminPagesController extends Controller
 			'blocks'     => $blocks,
 			'shared'     => $shared,
             'buffered'   => $buffered,
+            'areaRows'   => $areaRows,
 		));
 	}
 

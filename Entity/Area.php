@@ -23,6 +23,11 @@ class Area
 	 */
 	private $fixed = false;
 
+    /**
+     * @var string
+     */
+    private $row;
+
 	/**
 	 * Creates area from array
 	 *
@@ -46,6 +51,10 @@ class Area
 		if (isset($data['fixed'])) {
 			$area->setFixed($data['fixed']);
 		}
+
+        if (isset($data['row'])) {
+            $area->setRow($data['row']);
+        }
 
 		return $area;
 	}
@@ -109,4 +118,21 @@ class Area
 	{
 		return $this->fixed;
 	}
+
+    /**
+     * @param string $row
+     */
+    public function setRow($row)
+    {
+        $this->row = $row;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRow()
+    {
+        return $this->row;
+    }
+
 }
