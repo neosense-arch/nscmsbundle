@@ -22,7 +22,8 @@ class MapBlockSettingsForm extends AbstractType
     {
 		$builder
 			->add('apiKey', 'text', array(
-				'label' => 'API Key',
+                'label'    => 'API Key',
+                'required' => false,
 			))
 			->add('lat', 'text', array(
 				'label' => 'Широта (lat)',
