@@ -1,3 +1,27 @@
+{#
+    Meta:
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    Page title:
+        <title>{{ page.title }}</title>
+
+    Favicon:
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+    Home page link:
+        {{ url('ns_cms_main') }}
+
+    Area:
+        {{ ns_cms_area(blocks, 'top') }}
+
+    Regexp resources replacement:
+        href="css/(.+).css" => href="{{ asset('css/$1.css') }}"
+        src="js/(.+).js"    => src="{{ asset('js/$1.js') }}"
+        src="([^"]+)"       => src="{{ asset('$1') }}"
+#}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
