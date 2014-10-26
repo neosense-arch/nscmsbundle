@@ -59,6 +59,14 @@ class TemplateManager
         }
     }
 
+    /**
+     * @return string[]
+     */
+    public function getAllUserTemplates()
+    {
+        return $this->templateLocationService->getLocalTemplateNames();
+    }
+
 	/**
 	 * Retrieves page template
 	 *

@@ -3,6 +3,9 @@
 namespace NS\CmsBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 
@@ -91,4 +94,31 @@ class TemplateLocationService
 
         return null;
     }
-} 
+
+    /**
+     * @return string[]
+     */
+    public function getLocalTemplateNames()
+    {
+        $finder = new Finder();
+        $finder->files()
+            ->in($this->kernel->getRootDir() . '/Resources')
+            ->ignoreDotFiles(true)
+            ->name('*.html.twig')
+            ->sortByName()
+        ;
+
+        $names = array();
+
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file) {
+            $fileName = str_replace($this->kernel->getRootDir() . '/Resources/', '', $file);
+            $fileName = str_replace('/views/', ':', $fileName);
+            $fileName = str_replace('/', ':', $fileName);
+            $fileName = str_replace('views', ':', $fileName);
+            $names[] = $fileName;
+        }
+
+        return $names;
+    }
+}

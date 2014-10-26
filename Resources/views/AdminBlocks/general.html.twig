@@ -11,4 +11,13 @@
 		<button class="btn btn-success">Сохранить</button>
 		<a href="{{ redirect }}" class="btn">Отмена</a>
 	</form>
+
+    <script type="text/javascript">
+        (function($){
+            var templates = ['{{ templates|join("', '")|raw }}'];
+            $('#ns_cmsbundle_blocktype_template').autocomplete({
+                source: templates
+            });
+        })(jQuery);
+    </script>
 {% endblock %}

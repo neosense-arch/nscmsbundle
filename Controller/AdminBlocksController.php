@@ -287,6 +287,10 @@ class AdminBlocksController extends Controller
             throw new \Exception("Required param 'blockId' wasn't found");
         }
 
+        /** @var TemplateManager $templateManager */
+        $templateManager = $this->get('ns_cms.manager.template');
+        $templates = $templateManager->getAllUserTemplates();
+
 		// retrieving block
         /** @var BlockManager $blockManager */
         $blockManager = $this->get('ns_cms.manager.block');
@@ -298,8 +302,6 @@ class AdminBlocksController extends Controller
 		// validating form
 		$form->handleRequest($request);
         if ($form->isValid()) {
-            /** @var TemplateManager $templateManager */
-            $templateManager = $this->get('ns_cms.manager.template');
             $templateManager->createUserTemplate($block->getType()->getTemplate(), $block->getTemplate());
 
             $this->getDoctrine()->getManager()->flush();
@@ -307,9 +309,10 @@ class AdminBlocksController extends Controller
         }
 
 		return $this->render('NSCmsBundle:AdminBlocks:general.html.twig', array(
-			'form'     => $form->createView(),
-			'block'    => $block,
-			'redirect' => $this->getRedirectUri(),
+            'form'      => $form->createView(),
+            'block'     => $block,
+            'redirect'  => $this->getRedirectUri(),
+            'templates' => $templates,
 		));
 	}
 
